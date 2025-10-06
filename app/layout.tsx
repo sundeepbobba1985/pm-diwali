@@ -16,9 +16,9 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Pecan Meadow Community Ganesh Chaturthi 2025",
+  title: "Pecan Meadow Community Diwali Celebration 2025",
   description:
-    "Join Pecan Meadow Community for the celebration of Ganesh Chaturthi 2025 with traditional rituals, cultural programs, and community festivities",
+    "Join Pecan Meadow Community for the celebration of Diwali 2025 with traditional rituals, cultural programs, and community festivities",
   generator: "v0.dev",
 }
 
@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} antialiased`}>
-      <body className="font-sans">{children}</body>
+      <body>{children}</body>
     </html>
   )
 }
