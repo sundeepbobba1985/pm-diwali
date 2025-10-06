@@ -16,9 +16,9 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Pecan Meadow Community Ganesh Chaturthi 2025",
+  title: "Pecan Meadow Community 5th Annual Diwali 2025",
   description:
-    "Join Pecan Meadow Community for the celebration of Ganesh Chaturthi 2025 with traditional rituals, cultural programs, and community festivities",
+    "Join Pecan Meadow Community for the 5th Annual Diwali celebration 2025 with traditional rituals, cultural programs, and community festivities",
   generator: "v0.dev",
 }
 
