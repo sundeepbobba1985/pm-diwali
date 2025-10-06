@@ -29,7 +29,7 @@ export default function Page() {
 
   const [volunteerForm, setVolunteerForm] = useState({
     name: "",
-    email: "",
+    phone: "",
     volunteerType: "",
   })
 
@@ -111,7 +111,7 @@ export default function Page() {
       setIsSignedIn(true)
       setUserInfo({ name: userName, email: userEmail })
 
-      window.history.replaceState({}, "", "/")
+      window.history.replaceState({}, "/", "/")
     }
 
     const statsInterval = setInterval(() => {
@@ -218,7 +218,7 @@ export default function Page() {
       setShowVolunteerModal(false)
       setVolunteerForm({
         name: "",
-        email: "",
+        phone: "",
         volunteerType: "",
       })
     } catch (error) {
@@ -1094,13 +1094,14 @@ export default function Page() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-white">Email *</label>
+                  <label className="block text-sm font-medium mb-2 text-white">Phone Number *</label>
                   <input
-                    type="email"
+                    type="tel"
                     required
                     className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
-                    value={volunteerForm.email}
-                    onChange={(e) => setVolunteerForm({ ...volunteerForm, email: e.target.value })}
+                    placeholder="(123) 456-7890"
+                    value={volunteerForm.phone}
+                    onChange={(e) => setVolunteerForm({ ...volunteerForm, phone: e.target.value })}
                   />
                 </div>
 
