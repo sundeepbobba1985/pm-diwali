@@ -49,16 +49,31 @@ export default function Page() {
 
   const loadDashboardStats = async () => {
     try {
-      const storedData = localStorage.getItem("pm-diwali-registrations")
-      if (storedData) {
-        const registrations = JSON.parse(storedData)
-        const totalFamilies = registrations.length
-        const totalAdults = registrations.reduce((sum: number, r: any) => sum + Number(r.adults || 0), 0)
-        const totalKids = registrations.reduce((sum: number, r: any) => sum + Number(r.kids || 0), 0)
-        setDashboardStats({ totalFamilies, totalAdults, totalKids })
-      }
+      const response = await fetch("/api/get-registrations")
+      const data = await response.json()
+
+      console.log("[v0] Fetched registration stats:", data)
+
+      setDashboardStats({
+        totalFamilies: data.totalFamilies || 0,
+        totalAdults: data.totalAdults || 0,
+        totalKids: data.totalKids || 0,
+      })
     } catch (error) {
-      console.error("Error loading dashboard stats:", error)
+      console.error("[v0] Error loading dashboard stats:", error)
+      // Fallback to localStorage if API fails
+      try {
+        const storedData = localStorage.getItem("pm-diwali-registrations")
+        if (storedData) {
+          const registrations = JSON.parse(storedData)
+          const totalFamilies = registrations.length
+          const totalAdults = registrations.reduce((sum: number, r: any) => sum + Number(r.adults || 0), 0)
+          const totalKids = registrations.reduce((sum: number, r: any) => sum + Number(r.kids || 0), 0)
+          setDashboardStats({ totalFamilies, totalAdults, totalKids })
+        }
+      } catch (fallbackError) {
+        console.error("[v0] Fallback error:", fallbackError)
+      }
     }
   }
 
@@ -87,6 +102,12 @@ export default function Page() {
 
       window.history.replaceState({}, "", "/")
     }
+
+    const statsInterval = setInterval(() => {
+      loadDashboardStats()
+    }, 30000)
+
+    return () => clearInterval(statsInterval)
   }, [])
 
   const handleRegistrationSubmit = async (e: React.FormEvent) => {
@@ -707,6 +728,47 @@ export default function Page() {
                 <p className="text-white/80 text-sm leading-relaxed">
                   Traditional prasadam, special sweets, community dinner, and spectacular fireworks display
                 </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 bg-gradient-to-br from-indigo-700 via-purple-700 to-pink-700">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Join Our Growing Community</h2>
+            <p className="text-white/80 text-sm">See how many families have already registered for Diwali 2025</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md shadow-xl hover:shadow-2xl transition-shadow">
+              <CardContent className="pt-8 pb-8 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-300 to-orange-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <div className="text-4xl md:text-5xl font-bold text-white mb-2">{dashboardStats.totalFamilies}</div>
+                <p className="text-white/80 font-medium">Families Registered</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md shadow-xl hover:shadow-2xl transition-shadow">
+              <CardContent className="pt-8 pb-8 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-fuchsia-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <div className="text-4xl md:text-5xl font-bold text-white mb-2">{dashboardStats.totalAdults}</div>
+                <p className="text-white/80 font-medium">Adults Attending</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md shadow-xl hover:shadow-2xl transition-shadow">
+              <CardContent className="pt-8 pb-8 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <div className="text-4xl md:text-5xl font-bold text-white mb-2">{dashboardStats.totalKids}</div>
+                <p className="text-white/80 font-medium">Kids Joining</p>
               </CardContent>
             </Card>
           </div>
