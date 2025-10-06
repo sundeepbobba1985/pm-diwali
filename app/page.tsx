@@ -64,6 +64,30 @@ export default function Page() {
 
   useEffect(() => {
     loadDashboardStats()
+    const checkAuth = async () => {
+      const token = localStorage.getItem("google_auth_token")
+      const user = localStorage.getItem("google_user_info")
+      if (token && user) {
+        setIsSignedIn(true)
+        setUserInfo(JSON.parse(user))
+      }
+    }
+    checkAuth()
+
+    const params = new URLSearchParams(window.location.search)
+    const authToken = params.get("auth_token")
+    const userName = params.get("user_name")
+    const userEmail = params.get("user_email")
+
+    if (authToken && userName && userEmail) {
+      localStorage.setItem("google_auth_token", authToken)
+      localStorage.setItem("google_user_info", JSON.stringify({ name: userName, email: userEmail }))
+      setIsSignedIn(true)
+      setUserInfo({ name: userName, email: userEmail })
+
+      // Clean up URL
+      window.history.replaceState({}, "", "/")
+    }
   }, [])
 
   const handleRegistrationSubmit = async (e: React.FormEvent) => {
@@ -156,6 +180,21 @@ export default function Page() {
     setIsMobileMenuOpen(false)
   }
 
+  const handleGoogleSignIn = () => {
+    const mockUser = { name: "Guest User", email: "guest@example.com" }
+    localStorage.setItem("google_auth_token", "mock_token")
+    localStorage.setItem("google_user_info", JSON.stringify(mockUser))
+    setIsSignedIn(true)
+    setUserInfo(mockUser)
+  }
+
+  const handleSignOut = () => {
+    localStorage.removeItem("google_auth_token")
+    localStorage.removeItem("google_user_info")
+    setIsSignedIn(false)
+    setUserInfo(null)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-800 to-orange-700">
       <nav className="bg-transparent backdrop-blur-md sticky top-0 z-50">
@@ -224,7 +263,7 @@ export default function Page() {
                 variant="ghost"
                 size="sm"
                 className="hidden md:flex text-white hover:bg-white/20"
-                onClick={() => setIsSignedIn(!isSignedIn)}
+                onClick={() => (isSignedIn ? handleSignOut() : handleGoogleSignIn())}
               >
                 {isSignedIn ? "Sign Out" : "Sign In"}
               </Button>
@@ -292,7 +331,7 @@ export default function Page() {
                 variant="ghost"
                 size="sm"
                 className="justify-start text-white hover:bg-white/20"
-                onClick={() => setIsSignedIn(!isSignedIn)}
+                onClick={() => (isSignedIn ? handleSignOut() : handleGoogleSignIn())}
               >
                 {isSignedIn ? "Sign Out" : "Sign In"}
               </Button>
@@ -370,11 +409,13 @@ export default function Page() {
       <section id="registration" className="py-16 bg-gradient-to-br from-purple-600 via-fuchsia-600 to-pink-600">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
-            <Card className="border-white/20 shadow-lg backdrop-blur-md">
+            <Card className="border-white/20 shadow-2xl backdrop-blur-md bg-black/30">
               <CardContent className="pt-12 pb-12 px-8">
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Registration</h2>
-                  <p className="text-lg text-yellow-300 font-semibold">$75 per family</p>
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Registration</h2>
+                  <div className="inline-block bg-gradient-to-r from-yellow-300 to-orange-400 px-8 py-4 rounded-full shadow-lg animate-glow">
+                    <p className="text-2xl md:text-3xl font-bold text-white">$75 per family</p>
+                  </div>
                 </div>
 
                 {!isSignedIn ? (
@@ -384,19 +425,36 @@ export default function Page() {
                       Please sign in with Google to access registration
                     </p>
                     <Button
-                      className="w-full bg-transparent text-white"
-                      variant="outline"
-                      onClick={() => setIsSignedIn(true)}
+                      className="w-full bg-white hover:bg-gray-100 text-gray-900 font-semibold flex items-center justify-center gap-3"
+                      onClick={handleGoogleSignIn}
                     >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                          fill="currentColor"
+                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        />
+                        <path
+                          fill="currentColor"
+                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        />
+                        <path
+                          fill="currentColor"
+                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                        />
+                        <path
+                          fill="currentColor"
+                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        />
+                      </svg>
                       Continue with Google
                     </Button>
                   </div>
                 ) : !showRegistrationForm ? (
                   <div className="space-y-6">
-                    <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+                    <div className="bg-white/15 rounded-xl p-6 border border-white/30 shadow-lg">
                       <h3 className="text-lg font-bold mb-4 text-white">Step 1: Payment via Zelle</h3>
-                      <p className="text-white/80 mb-4">Send $75 to:</p>
-                      <div className="bg-white rounded-lg p-4 border border-white/20 mb-4">
+                      <p className="text-white/90 mb-4">Send $75 to:</p>
+                      <div className="bg-gradient-to-r from-yellow-300 to-orange-400 rounded-lg p-4 mb-4 shadow-lg">
                         <p className="font-mono text-lg text-center font-bold text-white">diwali@pecanmeadow.com</p>
                       </div>
                       <p className="text-sm text-white/80">
@@ -404,10 +462,10 @@ export default function Page() {
                       </p>
                     </div>
 
-                    <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+                    <div className="bg-white/15 rounded-xl p-6 border border-white/30 shadow-lg">
                       <h3 className="text-lg font-bold mb-4 text-white">Step 2: Complete Registration</h3>
                       <Button
-                        className="w-full bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white"
+                        className="w-full bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white font-semibold shadow-lg"
                         onClick={() => setShowRegistrationForm(true)}
                       >
                         Complete Registration Form
@@ -421,7 +479,7 @@ export default function Page() {
                       <input
                         type="text"
                         required
-                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                         value={formData.fullName}
                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                       />
@@ -432,7 +490,7 @@ export default function Page() {
                       <input
                         type="email"
                         required
-                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
@@ -443,7 +501,7 @@ export default function Page() {
                       <input
                         type="text"
                         required
-                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                         value={formData.address}
                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                       />
@@ -454,7 +512,7 @@ export default function Page() {
                       <input
                         type="tel"
                         required
-                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                         value={formData.mobile}
                         onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
                       />
@@ -467,7 +525,7 @@ export default function Page() {
                           type="number"
                           required
                           min="0"
-                          className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                           value={formData.adults}
                           onChange={(e) => setFormData({ ...formData, adults: e.target.value })}
                         />
@@ -479,7 +537,7 @@ export default function Page() {
                           type="number"
                           required
                           min="0"
-                          className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                          className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                           value={formData.kids}
                           onChange={(e) => setFormData({ ...formData, kids: e.target.value })}
                         />
@@ -491,7 +549,7 @@ export default function Page() {
                       <input
                         type="text"
                         required
-                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                         value={formData.zelleConfirmation}
                         onChange={(e) => setFormData({ ...formData, zelleConfirmation: e.target.value })}
                       />
@@ -501,14 +559,14 @@ export default function Page() {
                       <Button
                         type="button"
                         variant="outline"
-                        className="flex-1 bg-transparent text-white"
+                        className="flex-1 bg-white/10 text-white border-white/30 hover:bg-white/20"
                         onClick={() => setShowRegistrationForm(false)}
                       >
                         Back
                       </Button>
                       <Button
                         type="submit"
-                        className="flex-1 bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white"
+                        className="flex-1 bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white font-semibold shadow-lg"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? "Submitting..." : "Submit Registration"}
@@ -524,28 +582,60 @@ export default function Page() {
 
       <section id="volunteer" className="py-16 bg-gradient-to-br from-purple-700 via-pink-700 to-orange-700">
         <div className="container mx-auto px-6">
-          <div className="max-w-2xl mx-auto">
-            <Card className="border-white/20 shadow-lg backdrop-blur-md">
-              <CardContent className="pt-12 pb-12 px-8">
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-8 h-8 text-white" />
-                  </div>
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Volunteer With Us</h2>
-                  <p className="text-white/80 leading-relaxed mb-6">
-                    Help make our Diwali celebration memorable! We need volunteers for prasadam preparation, decoration,
-                    setup, and cleanup activities.
-                  </p>
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white"
-                    onClick={() => setShowVolunteerModal(true)}
-                  >
-                    Sign Up to Volunteer
-                  </Button>
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Volunteer With Us</h2>
+            <p className="text-white/90 leading-relaxed max-w-2xl mx-auto">
+              Help make our Diwali celebration memorable! We need volunteers for prasadam preparation, decoration,
+              setup, and cleanup activities.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
+              <CardContent className="pt-8 pb-8 text-center">
+                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Gift className="w-6 h-6 text-white" />
                 </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Prasadam Preparation</h3>
+                <p className="text-white/80 text-sm leading-relaxed">
+                  Help prepare delicious traditional food for the community feast
+                </p>
               </CardContent>
             </Card>
+
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
+              <CardContent className="pt-8 pb-8 text-center">
+                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Decoration & Setup</h3>
+                <p className="text-white/80 text-sm leading-relaxed">
+                  Create beautiful decorations and set up the venue for celebrations
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
+              <CardContent className="pt-8 pb-8 text-center">
+                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Event Support</h3>
+                <p className="text-white/80 text-sm leading-relaxed">
+                  Assist with registration, coordination, and cleanup activities
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white font-semibold px-8 py-6 text-base shadow-lg"
+              onClick={() => setShowVolunteerModal(true)}
+            >
+              Sign Up to Volunteer
+            </Button>
           </div>
         </div>
       </section>
