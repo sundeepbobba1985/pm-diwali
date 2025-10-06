@@ -31,7 +31,6 @@ export default function Page() {
     name: "",
     email: "",
     volunteerType: "",
-    cleanupDate: "",
   })
 
   const [showVolunteerModal, setShowVolunteerModal] = useState(false)
@@ -221,7 +220,6 @@ export default function Page() {
         name: "",
         email: "",
         volunteerType: "",
-        cleanupDate: "",
       })
     } catch (error) {
       console.error("Volunteer registration error:", error)
@@ -1127,16 +1125,6 @@ export default function Page() {
                       Clean-up Help
                     </option>
                   </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-white">Preferred Date</label>
-                  <input
-                    type="date"
-                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
-                    value={volunteerForm.cleanupDate}
-                    onChange={(e) => setVolunteerForm({ ...volunteerForm, cleanupDate: e.target.value })}
-                  />
                 </div>
 
                 <Button
