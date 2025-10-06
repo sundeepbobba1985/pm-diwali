@@ -181,11 +181,7 @@ export default function Page() {
   }
 
   const handleGoogleSignIn = () => {
-    const mockUser = { name: "Guest User", email: "guest@example.com" }
-    localStorage.setItem("google_auth_token", "mock_token")
-    localStorage.setItem("google_user_info", JSON.stringify(mockUser))
-    setIsSignedIn(true)
-    setUserInfo(mockUser)
+    window.location.href = "/api/auth/google"
   }
 
   const handleSignOut = () => {
