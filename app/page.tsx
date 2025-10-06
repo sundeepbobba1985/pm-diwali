@@ -257,32 +257,32 @@ export default function Page() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-yellow-300" />
-              <span className="font-serif text-lg font-semibold text-white">Diwali 2025</span>
+              <Sparkles className="w-6 h-6 text-yellow-300" />
+              <span className="font-serif text-xl md:text-2xl font-bold text-white">Diwali 2025</span>
             </div>
 
             <div className="hidden md:flex items-center gap-8">
               <button
                 onClick={() => scrollToSection("home")}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors"
               >
                 Home
               </button>
               <button
                 onClick={() => scrollToSection("registration")}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors"
               >
                 Register
               </button>
               <button
                 onClick={() => scrollToSection("volunteer")}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors"
               >
                 Volunteer
               </button>
               <button
                 onClick={() => scrollToSection("events")}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors"
               >
                 Events
               </button>
@@ -295,7 +295,7 @@ export default function Page() {
                     setShowGallery(true)
                   }
                 }}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors"
               >
                 Gallery
               </button>
@@ -308,7 +308,7 @@ export default function Page() {
                     loadParticipants()
                   }
                 }}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors"
               >
                 Participants
               </button>
@@ -318,13 +318,13 @@ export default function Page() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="hidden md:flex text-white hover:bg-white/20"
+                className="hidden md:flex text-white hover:bg-white/20 font-semibold"
                 onClick={() => (isSignedIn ? handleSignOut() : handleGoogleSignIn())}
               >
                 {isSignedIn ? "Sign Out" : "Sign In"}
               </Button>
               <button className="md:hidden text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
@@ -333,25 +333,25 @@ export default function Page() {
             <div className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t border-white/20 pt-4">
               <button
                 onClick={() => scrollToSection("home")}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors text-left"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors text-left"
               >
                 Home
               </button>
               <button
                 onClick={() => scrollToSection("registration")}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors text-left"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors text-left"
               >
                 Register
               </button>
               <button
                 onClick={() => scrollToSection("volunteer")}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors text-left"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors text-left"
               >
                 Volunteer
               </button>
               <button
                 onClick={() => scrollToSection("events")}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors text-left"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors text-left"
               >
                 Events
               </button>
@@ -365,7 +365,7 @@ export default function Page() {
                   }
                   setIsMobileMenuOpen(false)
                 }}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors text-left"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors text-left"
               >
                 Gallery
               </button>
@@ -379,14 +379,14 @@ export default function Page() {
                   }
                   setIsMobileMenuOpen(false)
                 }}
-                className="text-sm font-medium text-white/80 hover:text-white transition-colors text-left"
+                className="text-base font-bold text-white hover:text-yellow-300 transition-colors text-left"
               >
                 Participants
               </button>
               <Button
                 variant="ghost"
                 size="sm"
-                className="justify-start text-white hover:bg-white/20"
+                className="justify-start text-white hover:bg-white/20 font-semibold"
                 onClick={() => (isSignedIn ? handleSignOut() : handleGoogleSignIn())}
               >
                 {isSignedIn ? "Sign Out" : "Sign In"}
