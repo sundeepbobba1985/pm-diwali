@@ -158,7 +158,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-pink-800 to-orange-700">
-      <nav className="border-b border-white/20 bg-gradient-to-r from-purple-800 to-pink-700 backdrop-blur-md sticky top-0 z-50">
+      <nav className="bg-transparent backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -329,15 +329,15 @@ export default function Page() {
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
                 <Calendar className="w-4 h-4 text-white" />
-                <span className="text-sm font-medium text-white">October 20-22, 2025</span>
+                <span className="text-sm font-medium text-white">Saturday, November 1, 2025</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
                 <MapPin className="w-4 h-4 text-white" />
-                <span className="text-sm font-medium text-white">Community Center</span>
+                <span className="text-sm font-medium text-white">Allen Senior Center</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
                 <Clock className="w-4 h-4 text-white" />
-                <span className="text-sm font-medium text-white">6:00 PM - 10:00 PM</span>
+                <span className="text-sm font-medium text-white">5:00 PM - 10:00 PM</span>
               </div>
             </div>
 
@@ -367,39 +367,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-br from-pink-700 via-purple-700 to-indigo-800">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Event Dashboard</h2>
-            <p className="text-pink-100">Live registration statistics</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
-              <CardContent className="pt-8 pb-8 text-center">
-                <div className="text-5xl font-bold mb-2 text-yellow-300">{dashboardStats.totalFamilies}</div>
-                <div className="text-sm text-white font-medium">Registered Families</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
-              <CardContent className="pt-8 pb-8 text-center">
-                <div className="text-5xl font-bold mb-2 text-yellow-300">{dashboardStats.totalAdults}</div>
-                <div className="text-sm text-white font-medium">Total Adults</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
-              <CardContent className="pt-8 pb-8 text-center">
-                <div className="text-5xl font-bold mb-2 text-yellow-300">{dashboardStats.totalKids}</div>
-                <div className="text-sm text-white font-medium">Total Kids</div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section id="registration" className="py-16 bg-gradient-to-br from-orange-600 via-red-600 to-pink-700">
+      <section id="registration" className="py-16 bg-gradient-to-br from-purple-600 via-fuchsia-600 to-pink-600">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             <Card className="border-white/20 shadow-lg backdrop-blur-md">
@@ -554,7 +522,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section id="volunteer" className="py-16 bg-gradient-to-br from-purple-700 via-indigo-700 to-blue-800">
+      <section id="volunteer" className="py-16 bg-gradient-to-br from-purple-700 via-pink-700 to-orange-700">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             <Card className="border-white/20 shadow-lg backdrop-blur-md">
@@ -632,7 +600,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700">
+      <section className="py-16 bg-gradient-to-br from-purple-700 via-pink-700 to-fuchsia-700">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             <Card className="border-white/20 bg-white/10 backdrop-blur-md shadow-xl">
@@ -668,7 +636,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section id="faq" className="py-16 bg-gradient-to-br from-amber-600 via-orange-600 to-red-600">
+      <section id="faq" className="py-16 bg-gradient-to-br from-orange-700 via-pink-700 to-purple-700">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">Frequently Asked Questions</h2>
@@ -710,8 +678,8 @@ export default function Page() {
               <CardContent className="pt-6 pb-6">
                 <h3 className="font-bold text-white mb-2">Is parking available?</h3>
                 <p className="text-white/80 text-sm">
-                  Yes, ample parking is available at the community center. Please carpool when possible to ensure
-                  everyone has convenient access.
+                  Yes, ample parking is available at Allen Senior Center (451 St Mary Dr, Allen, TX 75002). Please
+                  carpool when possible to ensure everyone has convenient access.
                 </p>
               </CardContent>
             </Card>
