@@ -25,9 +25,8 @@ In the first row, add these column headers:
 In the first row, add these column headers:
 - A1: `Timestamp`
 - B1: `Name`
-- C1: `Email`
+- C1: `Phone`
 - D1: `Volunteer Activity`
-- E1: `Preferred Date`
 
 ## Step 2: Create Google Apps Script
 
@@ -81,9 +80,8 @@ function doPost(e) {
       volunteerSheet.appendRow([
         data.timestamp,
         data.name,
-        data.email,
-        data.volunteerType,
-        data.cleanupDate || "Not specified"
+        data.phone,
+        data.volunteerType
       ]);
       
       return ContentService.createTextOutput(JSON.stringify({
