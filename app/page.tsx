@@ -85,7 +85,6 @@ export default function Page() {
       setIsSignedIn(true)
       setUserInfo({ name: userName, email: userEmail })
 
-      // Clean up URL
       window.history.replaceState({}, "", "/")
     }
   }, [])
@@ -95,14 +94,41 @@ export default function Page() {
     setIsSubmitting(true)
 
     try {
-      const registrations = JSON.parse(localStorage.getItem("pm-diwali-registrations") || "[]")
-      registrations.push({
+      const registrationData = {
         ...formData,
         timestamp: new Date().toISOString(),
+      }
+
+      console.log("[v0] Submitting registration:", registrationData)
+
+      const response = await fetch("/api/submit-registration", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registrationData),
       })
+
+      const result = await response.json()
+      console.log("[v0] Registration response:", result)
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to submit registration")
+      }
+
+      // Also save to localStorage as backup
+      const registrations = JSON.parse(localStorage.getItem("pm-diwali-registrations") || "[]")
+      registrations.push(registrationData)
       localStorage.setItem("pm-diwali-registrations", JSON.stringify(registrations))
 
-      alert("Registration successful! Thank you for joining our Diwali celebration!")
+      if (result.warning || result.error) {
+        alert(`Registration successful! Note: ${result.warning || result.error}\n\nYour data is saved locally.`)
+      } else {
+        alert(
+          "Registration successful! Your data has been saved to Google Sheets. Thank you for joining our Diwali celebration!",
+        )
+      }
+
       setShowRegistrationForm(false)
       setFormData({
         fullName: "",
@@ -115,7 +141,8 @@ export default function Page() {
       })
       loadDashboardStats()
     } catch (error) {
-      alert("Registration failed. Please try again.")
+      console.error("[v0] Registration error:", error)
+      alert("Registration failed. Please try again or contact support.")
     } finally {
       setIsSubmitting(false)
     }
