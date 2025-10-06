@@ -46,22 +46,34 @@ export default function Page() {
     totalAdults: 0,
     totalKids: 0,
   })
+  const [isGoogleSheetsConfigured, setIsGoogleSheetsConfigured] = useState(true)
 
   const loadDashboardStats = async () => {
     try {
       const response = await fetch("/api/get-registrations")
       const data = await response.json()
 
-      console.log("[v0] Fetched registration stats:", data)
-
-      setDashboardStats({
-        totalFamilies: data.totalFamilies || 0,
-        totalAdults: data.totalAdults || 0,
-        totalKids: data.totalKids || 0,
-      })
+      if (data.error) {
+        setIsGoogleSheetsConfigured(false)
+        // Fall back to localStorage silently
+        const storedData = localStorage.getItem("pm-diwali-registrations")
+        if (storedData) {
+          const registrations = JSON.parse(storedData)
+          const totalFamilies = registrations.length
+          const totalAdults = registrations.reduce((sum: number, r: any) => sum + Number(r.adults || 0), 0)
+          const totalKids = registrations.reduce((sum: number, r: any) => sum + Number(r.kids || 0), 0)
+          setDashboardStats({ totalFamilies, totalAdults, totalKids })
+        }
+      } else {
+        setIsGoogleSheetsConfigured(true)
+        setDashboardStats({
+          totalFamilies: data.totalFamilies || 0,
+          totalAdults: data.totalAdults || 0,
+          totalKids: data.totalKids || 0,
+        })
+      }
     } catch (error) {
-      console.error("[v0] Error loading dashboard stats:", error)
-      // Fallback to localStorage if API fails
+      setIsGoogleSheetsConfigured(false)
       try {
         const storedData = localStorage.getItem("pm-diwali-registrations")
         if (storedData) {
@@ -72,7 +84,7 @@ export default function Page() {
           setDashboardStats({ totalFamilies, totalAdults, totalKids })
         }
       } catch (fallbackError) {
-        console.error("[v0] Fallback error:", fallbackError)
+        // Silent fallback error
       }
     }
   }
@@ -402,7 +414,7 @@ export default function Page() {
             <p className="text-sm font-medium text-yellow-200 mb-4 tracking-wider uppercase">Pecan Meadow Community</p>
 
             <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance leading-tight text-white drop-shadow-2xl">
-              5th Annual
+              5th Annual TEST
               <br />
               <span className="text-yellow-300">Diwali Celebration</span>
               <br />
@@ -426,7 +438,7 @@ export default function Page() {
 
             <p className="text-lg text-white mb-8 max-w-2xl mx-auto leading-relaxed">
               Join us for a magnificent celebration of the Festival of Lights with traditional rituals, vibrant cultural
-              performances, delicious prasadam, and community bonding.
+              performances, delicious dinner, and community bonding.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
@@ -629,8 +641,8 @@ export default function Page() {
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Volunteer With Us</h2>
             <p className="text-white/90 leading-relaxed max-w-2xl mx-auto">
-              Help make our Diwali celebration memorable! We need volunteers for prasadam preparation, decoration,
-              setup, and cleanup activities.
+              Help make our Diwali celebration memorable! We need volunteers for audio/video setup, decoration, and
+              cleanup activities.
             </p>
           </div>
 
@@ -638,11 +650,11 @@ export default function Page() {
             <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
               <CardContent className="pt-8 pb-8 text-center">
                 <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Gift className="w-6 h-6 text-white" />
+                  <Music className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white">Prasadam Preparation</h3>
+                <h3 className="text-xl font-bold mb-3 text-white">Audio/Video Setup Co-ordination</h3>
                 <p className="text-white/80 text-sm leading-relaxed">
-                  Help prepare delicious traditional food for the community feast
+                  Help coordinate audio/video equipment and technical setup for performances
                 </p>
               </CardContent>
             </Card>
@@ -662,11 +674,11 @@ export default function Page() {
             <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
               <CardContent className="pt-8 pb-8 text-center">
                 <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-6 h-6 text-white" />
+                  <Heart className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white">Event Support</h3>
+                <h3 className="text-xl font-bold mb-3 text-white">Clean-up Help</h3>
                 <p className="text-white/80 text-sm leading-relaxed">
-                  Assist with registration, coordination, and cleanup activities
+                  Assist with post-event cleanup and organizing activities
                 </p>
               </CardContent>
             </Card>
@@ -739,6 +751,9 @@ export default function Page() {
           <div className="max-w-4xl mx-auto text-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Join Our Growing Community</h2>
             <p className="text-white/80 text-sm">See how many families have already registered for Diwali 2025</p>
+            {!isGoogleSheetsConfigured && dashboardStats.totalFamilies === 0 && (
+              <p className="text-yellow-300 text-xs mt-2">Live stats will appear here once registrations begin</p>
+            )}
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -823,8 +838,7 @@ export default function Page() {
               <CardContent className="pt-6 pb-6">
                 <h3 className="font-bold text-white mb-2">What is included in the $75 registration fee?</h3>
                 <p className="text-white/80 text-sm">
-                  The registration fee covers all three days of celebration including traditional puja, cultural
-                  programs, prasadam, and community activities for your entire family.
+                  The registration fee covers the event center rental, decoration, clean-up help, dinner
                 </p>
               </CardContent>
             </Card>
@@ -833,8 +847,7 @@ export default function Page() {
               <CardContent className="pt-6 pb-6">
                 <h3 className="font-bold text-white mb-2">What should we bring?</h3>
                 <p className="text-white/80 text-sm">
-                  Please bring your enthusiasm and devotion! Traditional attire is encouraged but not required. We'll
-                  provide all necessary items for the puja and celebrations.
+                  Please bring your enthusiasm and devotion! Traditional attire is encouraged.
                 </p>
               </CardContent>
             </Card>

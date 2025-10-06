@@ -3,7 +3,6 @@ export async function GET() {
     const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL
 
     if (!webhookUrl) {
-      console.log("[v0] GOOGLE_SHEETS_WEBHOOK_URL not configured")
       return Response.json({
         totalFamilies: 0,
         totalAdults: 0,
@@ -12,36 +11,40 @@ export async function GET() {
       })
     }
 
-    console.log("[v0] Fetching registration data from Google Sheets...")
-
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000)
 
     const response = await fetch(webhookUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+      redirect: "follow",
       signal: controller.signal,
     })
 
     clearTimeout(timeoutId)
 
     if (!response.ok) {
-      console.error("[v0] Google Sheets webhook returned error:", response.status, response.statusText)
-      throw new Error(`Failed to fetch from Google Sheets: ${response.statusText}`)
+      return Response.json({
+        totalFamilies: 0,
+        totalAdults: 0,
+        totalKids: 0,
+        error: response.status === 302 || response.status === 301 ? "Deployment needs update" : "Failed to fetch",
+      })
     }
 
     const contentType = response.headers.get("content-type")
     if (!contentType || !contentType.includes("application/json")) {
-      console.error("[v0] Google Sheets webhook returned non-JSON response:", contentType)
-      const text = await response.text()
-      console.error("[v0] Response preview:", text.substring(0, 200))
-      throw new Error("Google Sheets webhook did not return JSON. Make sure the GET endpoint is configured correctly.")
+      return Response.json({
+        totalFamilies: 0,
+        totalAdults: 0,
+        totalKids: 0,
+        error: "Invalid response format",
+      })
     }
 
     const data = await response.json()
-    console.log("[v0] Successfully fetched registration data:", data)
 
     return Response.json({
       totalFamilies: data.totalFamilies || 0,
@@ -49,12 +52,11 @@ export async function GET() {
       totalKids: data.totalKids || 0,
     })
   } catch (error) {
-    console.error("[v0] Error fetching registration data:", error)
     return Response.json({
       totalFamilies: 0,
       totalAdults: 0,
       totalKids: 0,
-      error: error instanceof Error ? error.message : "Failed to fetch data",
+      error: "Failed to fetch data",
     })
   }
 }
