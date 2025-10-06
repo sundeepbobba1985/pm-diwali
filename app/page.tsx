@@ -1050,7 +1050,7 @@ export default function Page() {
 
       {showVolunteerModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-md border-white/20 shadow-2xl backdrop-blur-md bg-black/30">
             <CardContent className="pt-8 pb-8">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-white">Volunteer Registration</h3>
@@ -1064,7 +1064,7 @@ export default function Page() {
                   <input
                     type="text"
                     required
-                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                     value={volunteerForm.name}
                     onChange={(e) => setVolunteerForm({ ...volunteerForm, name: e.target.value })}
                   />
@@ -1075,7 +1075,7 @@ export default function Page() {
                   <input
                     type="email"
                     required
-                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                     value={volunteerForm.email}
                     onChange={(e) => setVolunteerForm({ ...volunteerForm, email: e.target.value })}
                   />
@@ -1085,17 +1085,31 @@ export default function Page() {
                   <label className="block text-sm font-medium mb-2 text-white">Volunteer Activity *</label>
                   <select
                     required
-                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                     value={volunteerForm.volunteerType}
                     onChange={(e) => setVolunteerForm({ ...volunteerForm, volunteerType: e.target.value })}
                   >
-                    <option value="">Select an activity</option>
-                    <option value="Prasadam Morning">Prasadam Preparation - Morning</option>
-                    <option value="Prasadam Evening">Prasadam Preparation - Evening</option>
-                    <option value="Decoration">Decoration & Setup</option>
-                    <option value="Cleanup">Cleanup & Organizing</option>
-                    <option value="Cultural Program">Cultural Program Coordination</option>
-                    <option value="Registration Desk">Registration Desk</option>
+                    <option value="" className="bg-gray-800">
+                      Select an activity
+                    </option>
+                    <option value="Prasadam Morning" className="bg-gray-800">
+                      Prasadam Preparation - Morning
+                    </option>
+                    <option value="Prasadam Evening" className="bg-gray-800">
+                      Prasadam Preparation - Evening
+                    </option>
+                    <option value="Decoration" className="bg-gray-800">
+                      Decoration & Setup
+                    </option>
+                    <option value="Cleanup" className="bg-gray-800">
+                      Cleanup & Organizing
+                    </option>
+                    <option value="Cultural Program" className="bg-gray-800">
+                      Cultural Program Coordination
+                    </option>
+                    <option value="Registration Desk" className="bg-gray-800">
+                      Registration Desk
+                    </option>
                   </select>
                 </div>
 
@@ -1103,7 +1117,7 @@ export default function Page() {
                   <label className="block text-sm font-medium mb-2 text-white">Preferred Date</label>
                   <input
                     type="date"
-                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
                     value={volunteerForm.cleanupDate}
                     onChange={(e) => setVolunteerForm({ ...volunteerForm, cleanupDate: e.target.value })}
                   />
@@ -1111,7 +1125,7 @@ export default function Page() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white"
+                  className="w-full bg-gradient-to-r from-yellow-300 to-orange-400 hover:from-yellow-400 hover:to-orange-500 text-white font-semibold shadow-lg"
                 >
                   Submit Volunteer Registration
                 </Button>
