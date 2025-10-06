@@ -400,21 +400,15 @@ export default function Page() {
         id="home"
         className="relative py-24 md:py-32 bg-gradient-to-br from-orange-600 via-pink-600 to-purple-700"
       >
-        <div className="absolute inset-0 bg-[url('/diwali-diyas-rangoli-fireworks.jpg')] opacity-20 bg-cover bg-center"></div>
+        <div className="absolute inset-0 bg-[url('/diwali-diyas-rangoli-fireworks.jpg')] opacity-50 bg-cover bg-center"></div>
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="mb-8 flex justify-center">
-              <div className="relative">
-                <div className="w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-2xl animate-glow">
-                  <Sparkles className="w-16 h-16 text-white" />
-                </div>
-              </div>
-            </div>
-
-            <p className="text-sm font-medium text-yellow-200 mb-4 tracking-wider uppercase">Pecan Meadow Community</p>
+            <p className="text-2xl md:text-3xl font-bold text-yellow-200 mb-6 tracking-wide uppercase drop-shadow-lg">
+              Pecan Meadow Community
+            </p>
 
             <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance leading-tight text-white drop-shadow-2xl">
-              5th Annual TEST
+              5th Annual
               <br />
               <span className="text-yellow-300">Diwali Celebration</span>
               <br />
@@ -428,7 +422,9 @@ export default function Page() {
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
                 <MapPin className="w-4 h-4 text-white" />
-                <span className="text-sm font-medium text-white">Allen Senior Center</span>
+                <span className="text-sm font-medium text-white">
+                  Allen Senior Center, 451 St Mary Dr, Allen, TX 75002
+                </span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
                 <Clock className="w-4 h-4 text-white" />
@@ -699,54 +695,132 @@ export default function Page() {
       <section id="events" className="py-16 bg-gradient-to-br from-pink-600 via-purple-600 to-indigo-700">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Festival Highlights</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Event Schedule</h2>
             <p className="text-white/80 leading-relaxed max-w-2xl mx-auto">
-              Three days of divine celebration featuring traditional rituals, vibrant cultural performances, and
-              delicious community meals.
+              Get ready for an unforgettable evening! Here's your roadmap to Diwali magic ✨
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
-              <CardContent className="pt-8 pb-8 text-center">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="w-6 h-6 text-white" />
+          <div className="max-w-4xl mx-auto space-y-4">
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-all hover:scale-105">
+              <CardContent className="pt-6 pb-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-300 to-orange-400 rounded-full flex items-center justify-center shadow-lg">
+                      <Clock className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-2xl font-bold text-yellow-300">4:45 - 5:30 PM</span>
+                      <span className="text-white/60">|</span>
+                      <span className="text-white font-semibold">The Calm Before the Storm</span>
+                    </div>
+                    <p className="text-white/80 text-sm leading-relaxed">
+                      Arrival, setup, and decoration time! Come early, grab the best parking spot, and help us make the
+                      venue sparkle.
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white">Lakshmi Puja & Aarti</h3>
-                <p className="text-white/80 text-sm leading-relaxed">
-                  Traditional Lakshmi puja with diyas, morning and evening aarti, and community prayers
-                </p>
               </CardContent>
             </Card>
 
-            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
-              <CardContent className="pt-8 pb-8 text-center">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Music className="w-6 h-6 text-white" />
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-all hover:scale-105">
+              <CardContent className="pt-6 pb-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-fuchsia-500 rounded-full flex items-center justify-center shadow-lg">
+                      <Users className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-2xl font-bold text-pink-300">5:30 PM SHARP</span>
+                      <span className="text-white/60">|</span>
+                      <span className="text-white font-semibold">Group Cultural Extravaganza Begins!</span>
+                    </div>
+                    <p className="text-white/80 text-sm leading-relaxed">
+                      The show starts NOW! Group performances, synchronized dances, and cultural showcases. Don't be
+                      late or you'll miss the opening act! 🎭✨
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white">Cultural Extravaganza</h3>
-                <p className="text-white/80 text-sm leading-relaxed">
-                  Classical dance, Bollywood performances, devotional music, and children's talent showcase
-                </p>
               </CardContent>
             </Card>
 
-            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
-              <CardContent className="pt-8 pb-8 text-center">
-                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Gift className="w-6 h-6 text-white" />
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-all hover:scale-105">
+              <CardContent className="pt-6 pb-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg">
+                      <Gift className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-2xl font-bold text-orange-300">7:00 PM</span>
+                      <span className="text-white/60">|</span>
+                      <span className="text-white font-semibold">Dinner Time & Solo Spotlight</span>
+                    </div>
+                    <p className="text-white/80 text-sm leading-relaxed">
+                      Feast mode activated! Delicious dinner served while solo performers take the stage. Eat, enjoy,
+                      and cheer for the brave souls performing solo! 🍽️🎤
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white">Grand Feast & Fireworks</h3>
-                <p className="text-white/80 text-sm leading-relaxed">
-                  Traditional prasadam, special sweets, community dinner, and spectacular fireworks display
-                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-all hover:scale-105">
+              <CardContent className="pt-6 pb-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                      <Music className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-2xl font-bold text-purple-300">8:30 - 9:30 PM</span>
+                      <span className="text-white/60">|</span>
+                      <span className="text-white font-semibold">DJ PARTY TIME! 🎉</span>
+                    </div>
+                    <p className="text-white/80 text-sm leading-relaxed">
+                      Time to DANCE! DJ takes over, lights go wild, and the dance floor is YOURS. Bring your best moves,
+                      your worst moves, we don't judge! 💃🕺
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-all hover:scale-105">
+              <CardContent className="pt-6 pb-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-lg">
+                      <Heart className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-2xl font-bold text-emerald-300">9:30 - 10:00 PM</span>
+                      <span className="text-white/60">|</span>
+                      <span className="text-white font-semibold">Clean-up Crew Assemble!</span>
+                    </div>
+                    <p className="text-white/80 text-sm leading-relaxed">
+                      Many hands make light work! Help us wrap up the celebration and leave the venue sparkling. Team
+                      effort = faster cleanup = everyone goes home happy! 🧹✨
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      <section className="py-12 bg-gradient-to-br from-indigo-700 via-purple-700 to-pink-700">
+      <section className="py-16 bg-gradient-to-br from-indigo-700 via-purple-700 to-pink-700">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Join Our Growing Community</h2>
@@ -856,8 +930,8 @@ export default function Page() {
               <CardContent className="pt-6 pb-6">
                 <h3 className="font-bold text-white mb-2">Can we volunteer?</h3>
                 <p className="text-white/80 text-sm">
-                  We welcome volunteers for various activities including prasadam preparation, decoration, setup, and
-                  cleanup. Please use the volunteer section to sign up.
+                  We welcome volunteers for various activities including Audio/video, decoration, setup, and cleanup.
+                  Please use the volunteer section to sign up.
                 </p>
               </CardContent>
             </Card>
