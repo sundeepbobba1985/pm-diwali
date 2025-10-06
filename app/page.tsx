@@ -4,14 +4,17 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Music, Heart, Users, X, Sparkles, Gift, Menu, CheckCircle2, MapPin } from "lucide-react"
+import { Calendar, Clock, MapPin, Music, Heart, Users, X, Sparkles, Gift, Menu } from "lucide-react"
 
-export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [showPasscodeModal, setShowPasscodeModal] = useState(false)
-  const [passcodeInput, setPasscodeInput] = useState("")
-  const [pendingAction, setPendingAction] = useState<"participants" | "gallery" | null>(null)
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Users, Sparkles, Heart, Menu, X, User, DollarSign, ImageIcon, CheckCircle2, Flame } from "lucide-react"
+import { useState, useEffect } from "react"
 
+export default function Page() {
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [userInfo, setUserInfo] = useState<{ name: string; email: string } | null>(null)
   const [showRegistrationForm, setShowRegistrationForm] = useState(false)
@@ -86,32 +89,6 @@ export default function Home() {
   const [showVolunteerModal, setShowVolunteerModal] = useState(false)
 
   const [visitorCount, setVisitorCount] = useState<number>(0)
-
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  })
-
-  useEffect(() => {
-    const eventDate = new Date("2025-10-20T18:00:00")
-    const timer = setInterval(() => {
-      const now = new Date()
-      const difference = eventDate.getTime() - now.getTime()
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        })
-      }
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [])
 
   const handleVolunteerSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -226,43 +203,252 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="bg-gradient-to-r from-[#C2185B] via-[#D81B60] to-[#E91E63] sticky top-0 z-50 shadow-lg">
+      <nav className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="text-white">
-                <div className="font-bold text-xl">Pecan Meadow</div>
-                <div className="text-xs opacity-90">Community Celebration</div>
-              </div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-accent" />
+              <span className="font-serif text-lg font-semibold">Diwali 2025</span>
             </div>
 
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-8">
               <button
                 onClick={() => scrollToSection("home")}
-                className="text-white hover:text-purple-200 transition-colors font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 Home
               </button>
               <button
                 onClick={() => scrollToSection("registration")}
-                className="text-white hover:text-purple-200 transition-colors font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+  const [userEmail, setUserEmail] = useState("")
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false)
+  const [showVolunteerModal, setShowVolunteerModal] = useState(false)
+  const [showGalleryModal, setShowGalleryModal] = useState(false)
+  const [showParticipantsModal, setShowParticipantsModal] = useState(false)
+  const [showFinancialsModal, setShowFinancialsModal] = useState(false)
+  const [passcode, setPasscode] = useState("")
+  const [participants, setParticipants] = useState<any[]>([])
+  const [expenses, setExpenses] = useState<any[]>([])
+  const [registrations, setRegistrations] = useState<any[]>([])
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+
+  useEffect(() => {
+    const eventDate = new Date("2025-10-20T18:00:00")
+    const timer = setInterval(() => {
+      const now = new Date()
+      const diff = eventDate.getTime() - now.getTime()
+      if (diff > 0) {
+        setCountdown({
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((diff % (1000 * 60)) / 1000),
+        })
+      }
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const handleGoogleSignIn = async () => {
+    if (isSignedIn) {
+      setIsSignedIn(false)
+      setUserEmail("")
+      return
+    }
+
+    try {
+      const response = await fetch("/api/auth/google")
+      const data = await response.json()
+      if (data.authUrl) {
+        window.location.href = data.authUrl
+      }
+    } catch (error) {
+      console.error("Sign in error:", error)
+    }
+  }
+
+  const handleRegistrationSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      adults: formData.get("adults"),
+      kids: formData.get("kids"),
+      amount: formData.get("amount"),
+      zelleEmail: formData.get("zelleEmail"),
+    }
+
+    try {
+      const response = await fetch("/api/submit-registration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+      if (response.ok) {
+        alert("Registration submitted successfully!")
+        setShowRegistrationModal(false)
+      }
+    } catch (error) {
+      console.error("Registration error:", error)
+    }
+  }
+
+  const handleVolunteerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      activity: formData.get("activity"),
+      date: formData.get("date"),
+    }
+
+    try {
+      const response = await fetch("/api/submit-volunteer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+      if (response.ok) {
+        alert("Volunteer registration submitted!")
+        setShowVolunteerModal(false)
+      }
+    } catch (error) {
+      console.error("Volunteer error:", error)
+    }
+  }
+
+  const handleViewParticipants = async () => {
+    if (passcode === "diwali2025") {
+      try {
+        const response = await fetch("/api/get-participants")
+        const data = await response.json()
+        setParticipants(data.participants || [])
+      } catch (error) {
+        console.error("Error fetching participants:", error)
+      }
+    } else {
+      alert("Incorrect passcode")
+    }
+  }
+
+  const handleViewFinancials = async () => {
+    if (passcode === "admin2025") {
+      try {
+        const response = await fetch("/api/get-expenses")
+        const data = await response.json()
+        setExpenses(data.expenses || [])
+      } catch (error) {
+        console.error("Error fetching expenses:", error)
+      }
+    } else {
+      alert("Incorrect admin passcode")
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-orange-50">
+      <header className="bg-gradient-to-r from-purple-600 via-purple-700 to-fuchsia-600 text-white sticky top-0 z-50 shadow-lg">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">Diwali 2025</h1>
+                <p className="text-xs text-purple-100">Pecan Meadow Community</p>
+              </div>
+            </div>
+
+            <nav className="hidden md:flex items-center gap-6">
+              <a href="#home" className="text-sm hover:text-purple-200 transition-colors">
+                Home
+              </a>
+              <button
+                onClick={() => setShowRegistrationModal(true)}
+                className="text-sm hover:text-purple-200 transition-colors"
+              >
+                Register
+              </button>
+              <button
+                onClick={() => setShowVolunteerModal(true)}
+                className="text-sm hover:text-purple-200 transition-colors"
+              >
+                Volunteers
+              </button>
+              <button
+                onClick={() => setShowGalleryModal(true)}
+                className="text-sm hover:text-purple-200 transition-colors"
+              >
+                Gallery
+              </button>
+              <button
+                onClick={() => setShowParticipantsModal(true)}
+                className="text-sm hover:text-purple-200 transition-colors"
+              >
+                Participants
+              </button>
+              <a href="#faq" className="text-sm hover:text-purple-200 transition-colors">
+                FAQ
+              </a>
+            </nav>
+
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleGoogleSignIn}
+                className="hidden md:flex bg-white text-purple-600 hover:bg-purple-50"
+                size="sm"
+              >
+                {isSignedIn ? (
+                  <>
+                    <User className="w-4 h-4 mr-2" />
+                    Account
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 hover:bg-purple-500 rounded-lg transition-colors"
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          {isMobileMenuOpen && (
+            <nav className="md:hidden pt-4 pb-2 flex flex-col gap-3 border-t border-purple-500 mt-4">
+              <a href="#home" className="text-sm hover:text-purple-200 py-2">
+                Home
+              </a>
+              <button
+                onClick={() => {
+                  setShowRegistrationModal(true)
+                  setIsMobileMenuOpen(false)
+                }}
+                className="text-sm hover:text-purple-200 py-2 text-left"
               >
                 Register
               </button>
               <button
                 onClick={() => scrollToSection("volunteer")}
-                className="text-white hover:text-purple-200 transition-colors font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Volunteers
+                Volunteer
               </button>
               <button
                 onClick={() => scrollToSection("events")}
-                className="text-white hover:text-purple-200 transition-colors font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Sponsors
+                Events
               </button>
               <button
                 onClick={() => {
@@ -273,9 +459,23 @@ export default function Home() {
                     setShowGallery(true)
                   }
                 }}
-                className="text-white hover:text-purple-200 transition-colors font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => {
+                  setShowVolunteerModal(true)
+                  setIsMobileMenuOpen(false)
+                }}
+                className="text-sm hover:text-purple-200 py-2 text-left"
               >
-                Friends Of Diwali
+                Volunteers
+              </button>
+              <button
+                onClick={() => {
+                  setShowGalleryModal(true)
+                  setIsMobileMenuOpen(false)
+                }}
+                className="text-sm hover:text-purple-200 py-2 text-left"
+              >
+                Gallery
               </button>
               <button
                 onClick={() => {
@@ -286,52 +486,48 @@ export default function Home() {
                     loadParticipants()
                   }
                 }}
-                className="text-white hover:text-purple-200 transition-colors font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Board Members
+                Participants
               </button>
             </div>
 
             <div className="flex items-center gap-4">
-              <Button
-                className="hidden md:flex bg-white text-purple-600 hover:bg-purple-50 font-semibold"
-                size="sm"
-                onClick={() => setIsSignedIn(!isSignedIn)}
-              >
-                Get Contacts
+              <Button variant="ghost" size="sm" className="hidden md:flex" onClick={() => setIsSignedIn(!isSignedIn)}>
+                {isSignedIn ? "Sign Out" : "Sign In"}
               </Button>
-              <button className="md:hidden text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                <Menu className="w-6 h-6" />
+              <button className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                <Menu className="w-5 h-5" />
               </button>
             </div>
           </div>
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t border-purple-500 pt-4">
+            <div className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t border-border pt-4">
               <button
                 onClick={() => scrollToSection("home")}
-                className="text-white hover:text-purple-200 transition-colors text-left font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left"
               >
                 Home
               </button>
               <button
                 onClick={() => scrollToSection("registration")}
-                className="text-white hover:text-purple-200 transition-colors text-left font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left"
               >
                 Register
               </button>
               <button
                 onClick={() => scrollToSection("volunteer")}
-                className="text-white hover:text-purple-200 transition-colors text-left font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left"
               >
-                Volunteers
+                Volunteer
               </button>
               <button
                 onClick={() => scrollToSection("events")}
-                className="text-white hover:text-purple-200 transition-colors text-left font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left"
               >
-                Sponsors
+                Events
               </button>
               <button
                 onClick={() => {
@@ -342,9 +538,9 @@ export default function Home() {
                     setShowGallery(true)
                   }
                 }}
-                className="text-white hover:text-purple-200 transition-colors text-left font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left"
               >
-                Friends Of Diwali
+                Gallery
               </button>
               <button
                 onClick={() => {
@@ -355,244 +551,78 @@ export default function Home() {
                     loadParticipants()
                   }
                 }}
-                className="text-white hover:text-purple-200 transition-colors text-left font-medium"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left"
               >
-                Board Members
+                Participants
               </button>
+              <Button variant="ghost" size="sm" className="justify-start" onClick={() => setIsSignedIn(!isSignedIn)}>
+                {isSignedIn ? "Sign Out" : "Sign In"}
+              </Button>
             </div>
           )}
         </div>
       </nav>
 
-      <section id="home" className="relative h-[700px] overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="/stunning-diwali-diyas-flowers-purple-background.jpg"
-            alt="Diwali Celebration"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/40 via-pink-900/30 to-orange-900/40" />
-        </div>
-
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-10 left-10 w-16 h-20 bg-red-500/30 rounded-full blur-sm animate-float" />
-          <div
-            className="absolute top-20 right-20 w-20 h-24 bg-yellow-500/30 rounded-full blur-sm animate-float"
-            style={{ animationDelay: "1s" }}
-          />
-          <div
-            className="absolute top-40 left-1/4 w-14 h-18 bg-blue-500/30 rounded-full blur-sm animate-float"
-            style={{ animationDelay: "2s" }}
-          />
-          <div
-            className="absolute top-60 right-1/3 w-18 h-22 bg-green-500/30 rounded-full blur-sm animate-float"
-            style={{ animationDelay: "1.5s" }}
-          />
-        </div>
-
-        <div className="relative h-full flex items-center justify-center">
-          <div className="text-center text-white px-6">
-            <div className="mb-6 flex justify-center gap-4">
-              <Sparkles className="w-12 h-12 text-yellow-300 animate-sparkle" />
-              <Sparkles className="w-16 h-16 text-orange-300 animate-sparkle" style={{ animationDelay: "0.5s" }} />
-              <Sparkles className="w-12 h-12 text-pink-300 animate-sparkle" style={{ animationDelay: "1s" }} />
+      <section id="home" className="relative py-24 md:py-32">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="mb-8 flex justify-center">
+              <div className="relative">
+                <div className="w-32 h-32 bg-accent rounded-full flex items-center justify-center">
+                  <Sparkles className="w-16 h-16 text-accent-foreground" />
+                </div>
+              </div>
             </div>
-            <h1
-              className="text-7xl md:text-9xl font-bold mb-6 drop-shadow-2xl tracking-tight"
-              style={{ color: "#FFD700", textShadow: "0 0 30px rgba(255,215,0,0.5)" }}
-            >
-              5TH ANNUAL DIWALI
-            </h1>
-            <p className="text-2xl md:text-3xl font-bold drop-shadow-lg mb-3 text-yellow-200">
-              Festival of Lights Celebration
+
+            <p className="text-sm font-medium text-muted-foreground mb-4 tracking-wider uppercase">
+              Pecan Meadow Community
             </p>
-            <p className="text-xl md:text-2xl font-medium drop-shadow-lg text-orange-200">October 20-22, 2025</p>
-          </div>
-        </div>
-      </section>
 
-      <div className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 py-4 overflow-hidden shadow-lg">
-        <div className="flex whitespace-nowrap animate-scroll">
-          <span className="text-white font-bold text-xl mx-8">
-            ✨ "THIS DIWALI, LET THERE BE A FAIR OF HAPPINESS" ✨
-          </span>
-          <span className="text-white font-bold text-xl mx-8">🪔 "EVERY ROAD DECORATED WITH LAMPS!" 🪔</span>
-          <span className="text-white font-bold text-xl mx-8">
-            💫 "LIGHT OF LAMPS, LIGHT OF HEARTS - HAPPY DIWALI" 💫
-          </span>
-          <span className="text-white font-bold text-xl mx-8">
-            ✨ "THIS DIWALI, LET THERE BE A FAIR OF HAPPINESS" ✨
-          </span>
-          <span className="text-white font-bold text-xl mx-8">🪔 "EVERY ROAD DECORATED WITH LAMPS!" 🪔</span>
-          <span className="text-white font-bold text-xl mx-8">
-            💫 "LIGHT OF LAMPS, LIGHT OF HEARTS - HAPPY DIWALI" 💫
-          </span>
-        </div>
-      </div>
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance leading-tight">
+              5th Annual
+              <br />
+              <span className="text-accent">Diwali Celebration</span>
+              <br />
+              2025
+            </h1>
 
-      <section className="py-16 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 festive-pattern">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button
-              size="lg"
-              className="bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white font-bold px-10 py-7 rounded-full shadow-xl transform hover:scale-105 transition-all"
-              onClick={() => scrollToSection("events")}
-            >
-              Become Sponsors →
-            </Button>
-            <Button
-              size="lg"
-              className="bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white font-bold px-10 py-7 rounded-full shadow-xl transform hover:scale-105 transition-all"
-              onClick={() => scrollToSection("registration")}
-            >
-              Become A Vendor →
-            </Button>
-            <Button
-              size="lg"
-              className="bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white font-bold px-10 py-7 rounded-full shadow-xl transform hover:scale-105 transition-all"
-              onClick={() => scrollToSection("volunteer")}
-            >
-              Become Volunteers →
-            </Button>
-            <Button
-              size="lg"
-              className="bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white font-bold px-10 py-7 rounded-full shadow-xl transform hover:scale-105 transition-all"
-              onClick={() => scrollToSection("volunteer")}
-            >
-              Want To Perform! →
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
-        <div className="absolute inset-0 festive-pattern opacity-30" />
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="text-center">
-            <p className="text-yellow-300 uppercase tracking-wider text-sm mb-2 font-bold">Next Event</p>
-            <h2 className="text-white text-4xl font-bold mb-10 drop-shadow-lg">OCTOBER 20, 2025 | MONDAY</h2>
-            <div className="flex justify-center gap-8">
-              <div className="text-center">
-                <div className="w-24 h-24 rounded-full border-4 border-yellow-400 bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center mb-3 shadow-2xl animate-glow">
-                  <span className="text-white text-3xl font-bold">{timeLeft.days}</span>
-                </div>
-                <p className="text-yellow-200 text-sm font-bold">Day</p>
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-full">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-medium">October 20-22, 2025</span>
               </div>
-              <div className="text-center">
-                <div
-                  className="w-24 h-24 rounded-full border-4 border-yellow-400 bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center mb-3 shadow-2xl animate-glow"
-                  style={{ animationDelay: "0.5s" }}
-                >
-                  <span className="text-white text-3xl font-bold">{timeLeft.hours}</span>
-                </div>
-                <p className="text-yellow-200 text-sm font-bold">Hour</p>
+              <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-full">
+                <MapPin className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Community Center</span>
               </div>
-              <div className="text-center">
-                <div
-                  className="w-24 h-24 rounded-full border-4 border-yellow-400 bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center mb-3 shadow-2xl animate-glow"
-                  style={{ animationDelay: "1s" }}
-                >
-                  <span className="text-white text-3xl font-bold">{timeLeft.minutes}</span>
-                </div>
-                <p className="text-yellow-200 text-sm font-bold">Min</p>
-              </div>
-              <div className="text-center">
-                <div
-                  className="w-24 h-24 rounded-full border-4 border-yellow-400 bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center mb-3 shadow-2xl animate-glow"
-                  style={{ animationDelay: "1.5s" }}
-                >
-                  <span className="text-white text-3xl font-bold">{timeLeft.seconds}</span>
-                </div>
-                <p className="text-yellow-200 text-sm font-bold">Sec</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="events" className="py-20 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 festive-pattern">
-        <div className="container mx-auto px-6">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <p className="text-sm text-gray-600 uppercase tracking-wider mb-2">DIWALI AT BEACH</p>
-              <h2 className="text-4xl font-bold">ALL SPONSOR</h2>
-            </div>
-            <Button className="bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white font-semibold rounded-full">
-              Explore Sponsors →
-            </Button>
-          </div>
-          <div className="bg-white rounded-lg p-12 text-center border-2 border-dashed border-gray-300">
-            <p className="text-gray-500">Sponsor logos will appear here</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 festive-pattern">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-            <div className="space-y-6">
-              <div className="relative">
-                <img
-                  src="/colorful-diwali-diya-lamp-with-rangoli-patterns-fi.jpg"
-                  alt="Diwali Diya and Rangoli"
-                  className="rounded-2xl shadow-2xl w-full"
-                />
-              </div>
-              <div className="relative">
-                <div className="bg-gradient-to-br from-yellow-400 via-orange-400 to-red-500 rounded-2xl p-8 shadow-xl">
-                  <div className="text-white text-center">
-                    <div className="text-6xl font-bold mb-2">5th</div>
-                    <div className="text-2xl font-bold mb-1">Let's Celebrate</div>
-                    <div className="text-4xl font-bold">Diwali</div>
-                    <div className="text-2xl font-bold">at Beach</div>
-                  </div>
-                </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-muted rounded-full">
+                <Clock className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-medium">6:00 PM - 10:00 PM</span>
               </div>
             </div>
 
-            <div>
-              <p className="text-purple-600 font-semibold uppercase tracking-wider mb-3">WELCOME TO</p>
-              <h2 className="text-5xl font-bold mb-6">Diwali At Beach!</h2>
-              <p className="text-gray-700 leading-relaxed mb-6">
-                Diwali, or Deepavali, is India's biggest and most important holiday of the year. The festival gets its
-                name from the row of clay lamps (deepa) that Indians light outside their homes to symbolize the inner
-                light that protects from spiritual darkness.
-              </p>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+              Join us for a magnificent celebration of the Festival of Lights with traditional rituals, vibrant cultural
+              performances, delicious prasadam, and community bonding.
+            </p>
 
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <p className="text-gray-700">We Are Celebrating Diwali At Little Elm Beach Park</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <p className="text-gray-700">
-                    Come With Your Family & Friends For Fun, Food And Fireworks, Free Entry & Free Parking
-                  </p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
-                  <p className="text-gray-700">
-                    There will be Dandiya, Performed By Kids On The Stage, Dance Performances, Cultural Fashion Show,
-                    DJ, Food Booths, Fireworks, Activities For Kids & Adults Including Bounce House, Face Painting,
-                    Balloon Twisting, Henna Tattoo, Games And Much More
-                  </p>
-                </div>
-              </div>
-
+            <div className="flex flex-wrap justify-center gap-4">
               <Button
                 size="lg"
-                className="bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white font-semibold px-8 py-6 rounded-full shadow-lg"
+                className="bg-accent hover:bg-accent/90 text-accent-foreground"
                 onClick={() => scrollToSection("registration")}
               >
-                Read More →
+                Register Now
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => scrollToSection("events")}>
+                View Schedule
               </Button>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 festive-pattern">
+      <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">Event Dashboard</h2>
@@ -624,87 +654,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <p className="text-sm text-gray-600 uppercase tracking-wider mb-2">FIND YOUR PARKING</p>
-            <h2 className="text-4xl font-bold mb-4">Parking Details With Location</h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="border-2 border-gray-200 hover:shadow-xl transition-shadow">
-              <CardContent className="pt-6 pb-6">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-16 h-16 bg-[#1a2b4a] rounded-full flex items-center justify-center">
-                    <MapPin className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-center font-bold mb-2">FREE PARKING</h3>
-                <p className="text-center text-sm text-gray-600 mb-4">Little Elm Beach Park</p>
-                <div className="bg-gray-100 rounded-lg h-48 mb-4 flex items-center justify-center">
-                  <img
-                    src="/map-view-of-little-elm-beach-park-parking-area.jpg"
-                    alt="Parking Map"
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-                <Button className="w-full bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white rounded-full">
-                  Click For Location →
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-gray-200 hover:shadow-xl transition-shadow">
-              <CardContent className="pt-6 pb-6">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-16 h-16 bg-[#1a2b4a] rounded-full flex items-center justify-center">
-                    <MapPin className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-center font-bold mb-2">PAID PARKING</h3>
-                <p className="text-center text-sm text-gray-600 mb-4">Little Elm Main Street</p>
-                <div className="bg-gray-100 rounded-lg h-48 mb-4 flex items-center justify-center">
-                  <img
-                    src="/map-view-of-little-elm-main-street-parking.jpg"
-                    alt="Parking Map"
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-                <Button className="w-full bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white rounded-full">
-                  Click For Location →
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-gray-200 hover:shadow-xl transition-shadow">
-              <CardContent className="pt-6 pb-6">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-16 h-16 bg-[#1a2b4a] rounded-full flex items-center justify-center">
-                    <MapPin className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-center font-bold mb-2">PAID PARKING</h3>
-                <p className="text-center text-sm text-gray-600 mb-4">Little Elm Public Library</p>
-                <div className="bg-gray-100 rounded-lg h-48 mb-4 flex items-center justify-center">
-                  <img
-                    src="/map-view-of-little-elm-public-library-parking.jpg"
-                    alt="Parking Map"
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-                <Button className="w-full bg-[#1a2b4a] hover:bg-[#0f1a2e] text-white rounded-full">
-                  Click For Location →
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section
-        id="registration"
-        className="py-20 bg-gradient-to-br from-purple-100 via-pink-100 to-rose-100 festive-pattern"
-      >
+      <section id="registration" className="py-16">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             <Card className="border-border shadow-lg">
@@ -855,10 +805,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section
-        id="volunteer"
-        className="py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 festive-pattern"
-      >
+      <section id="volunteer" className="py-16 bg-muted/30">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             <Card className="border-border shadow-lg">
@@ -886,7 +833,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50 festive-pattern">
+      <section id="events" className="py-16">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Festival Highlights</h2>
@@ -916,7 +863,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold mb-3">Cultural Extravaganza</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Classical dance, Bollywood performances, devotional music, and children's showcase
+                  Classical dance, Bollywood performances, devotional music, and children's talent showcase
                 </p>
               </CardContent>
             </Card>
@@ -937,7 +884,7 @@ export default function Home() {
       </section>
 
       {/* Share Your Blessings */}
-      <section className="py-20 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 festive-pattern">
+      <section className="py-16">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto">
             <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 shadow-xl">
@@ -974,7 +921,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-20 bg-gradient-to-br from-amber-100 via-orange-100 to-red-100 festive-pattern">
+      <section id="faq" className="py-16 bg-gradient-to-b from-amber-50 to-orange-50">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
@@ -1025,15 +972,14 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-900 text-white py-16 relative overflow-hidden">
-        <div className="absolute inset-0 festive-pattern opacity-20" />
-        <div className="container mx-auto px-6 text-center relative z-10">
+      <footer className="bg-muted/50 border-t border-border py-12">
+        <div className="container mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-purple-400" />
-            <span className="font-serif text-lg font-semibold">5th Annual Diwali Celebration</span>
+            <Sparkles className="w-5 h-5 text-accent" />
+            <span className="font-serif text-lg font-semibold">Diwali 2025</span>
           </div>
-          <p className="text-sm text-purple-200">© 2025 Pecan Meadow Community. All rights reserved.</p>
-          <p className="text-xs text-purple-300 mt-2">Celebrating traditions, building community</p>
+          <p className="text-sm text-muted-foreground">© 2025 Pecan Meadow Community. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground mt-2">Celebrating traditions, building community</p>
         </div>
       </footer>
 
@@ -1197,6 +1143,438 @@ export default function Home() {
           </Card>
         </div>
       )}
+                  setShowParticipantsModal(true)
+                  setIsMobileMenuOpen(false)
+                }}
+                className="text-sm hover:text-purple-200 py-2 text-left"
+              >
+                Participants
+              </button>
+              <a href="#faq" className="text-sm hover:text-purple-200 py-2">
+                FAQ
+              </a>
+              <Button onClick={handleGoogleSignIn} className="mt-2 bg-white text-purple-600 hover:bg-purple-50">
+                {isSignedIn ? "Account" : "Sign In"}
+              </Button>
+            </nav>
+          )}
+        </div>
+      </header>
+
+      <section className="relative h-[600px] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500">
+          <img
+            src="/colorful-diwali-celebration-with-diyas--rangoli--f.jpg"
+            alt="Diwali Celebration"
+            className="w-full h-full object-cover mix-blend-overlay opacity-80"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        <div className="relative container mx-auto px-4 h-full flex flex-col items-center justify-center text-center text-white">
+          <div className="space-y-6 max-w-4xl">
+            <div className="inline-block bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full border-2 border-white/40">
+              <p className="text-sm font-semibold uppercase tracking-wider">
+                "This Diwali, Let There Be A Fair Of Happiness" - Every Road Decorated With Lamps!
+              </p>
+            </div>
+
+            <h1 className="text-6xl md:text-8xl font-bold drop-shadow-2xl">
+              5th Annual
+              <br />
+              <span className="text-yellow-300">DIWALI CELEBRATION</span>
+            </h1>
+
+            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto">
+              Light Of Lamps, Light Of Hearts - Happy Diwali!
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-8 bg-gradient-to-r from-purple-600 to-fuchsia-600">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button
+              onClick={() => setShowRegistrationModal(true)}
+              className="bg-blue-900 hover:bg-blue-800 text-white px-8 py-6 text-lg rounded-full shadow-lg"
+            >
+              <Users className="w-5 h-5 mr-2" />
+              Register Now
+            </Button>
+            <Button
+              onClick={() => setShowVolunteerModal(true)}
+              className="bg-blue-900 hover:bg-blue-800 text-white px-8 py-6 text-lg rounded-full shadow-lg"
+            >
+              <Heart className="w-5 h-5 mr-2" />
+              Become A Volunteer
+            </Button>
+            <Button
+              onClick={() => setShowGalleryModal(true)}
+              className="bg-blue-900 hover:bg-blue-800 text-white px-8 py-6 text-lg rounded-full shadow-lg"
+            >
+              <ImageIcon className="w-5 h-5 mr-2" />
+              View Gallery
+            </Button>
+            <Button
+              onClick={() => setShowFinancialsModal(true)}
+              className="bg-blue-900 hover:bg-blue-800 text-white px-8 py-6 text-lg rounded-full shadow-lg"
+            >
+              <DollarSign className="w-5 h-5 mr-2" />
+              Become Sponsors
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 bg-gradient-to-r from-blue-900 to-blue-800 text-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4">
+            <p className="text-sm uppercase tracking-wider text-blue-200">Next Event</p>
+            <h2 className="text-3xl font-bold">October 20, 2025 | Sunday</h2>
+            <div className="flex justify-center gap-8 mt-6">
+              <div className="text-center">
+                <div className="w-20 h-20 rounded-full bg-pink-500 flex items-center justify-center text-3xl font-bold">
+                  {countdown.days}
+                </div>
+                <p className="text-xs mt-2 text-blue-200">Days</p>
+              </div>
+              <div className="text-center">
+                <div className="w-20 h-20 rounded-full bg-pink-500 flex items-center justify-center text-3xl font-bold">
+                  {countdown.hours}
+                </div>
+                <p className="text-xs mt-2 text-blue-200">Hours</p>
+              </div>
+              <div className="text-center">
+                <div className="w-20 h-20 rounded-full bg-pink-500 flex items-center justify-center text-3xl font-bold">
+                  {countdown.minutes}
+                </div>
+                <p className="text-xs mt-2 text-blue-200">Min</p>
+              </div>
+              <div className="text-center">
+                <div className="w-20 h-20 rounded-full bg-pink-500 flex items-center justify-center text-3xl font-bold">
+                  {countdown.seconds}
+                </div>
+                <p className="text-xs mt-2 text-blue-200">Sec</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <img src="/traditional-diwali-diya-lamp-with-rangoli-patterns.jpg" alt="Diwali Celebration" className="rounded-2xl shadow-2xl" />
+            </div>
+            <div className="space-y-6">
+              <div className="inline-block">
+                <div className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-full text-sm font-semibold">
+                  WELCOME TO
+                </div>
+              </div>
+              <h2 className="text-5xl font-bold text-gray-900">5th Annual Diwali Celebration!</h2>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Diwali, or Deepavali, is India's biggest and most important holiday of the year. The festival gets its
+                name from the row of clay lamps (deepa) that Indians light outside their homes to symbolize the inner
+                light that protects from spiritual darkness.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                  <p className="text-gray-700">We Are Celebrating Diwali At Little Elm Beach Park</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                  <p className="text-gray-700">
+                    Come With Your Family & Friends For Fun, Food And Fireworks, Free Entry & Free Parking
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                  <p className="text-gray-700">
+                    There will be Dandiya, Performed By Kids On The Stage, Dance Performances, Cultural Fashion Show,
+                    Live Food Booths, Fireworks, Activities For Kids & Adults Including Bounce House, Face Painting,
+                    Balloon Twisting, Henna, Rangoli Competition And Much More
+                  </p>
+                </div>
+              </div>
+              <div className="pt-4">
+                <Button
+                  onClick={() => setShowRegistrationModal(true)}
+                  className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white px-8 py-6 text-lg rounded-full shadow-lg"
+                >
+                  Register Now
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-gradient-to-b from-purple-50 to-orange-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-12">
+            <h2 className="text-4xl font-bold text-gray-900">Festival Highlights</h2>
+            <p className="text-lg text-gray-600">Experience the magic of Diwali with us</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="p-8 text-center space-y-4 hover:shadow-xl transition-shadow border-2 border-orange-200">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full flex items-center justify-center mx-auto">
+                <Flame className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Traditional Ceremonies</h3>
+              <p className="text-gray-600">
+                Participate in traditional diya lighting, rangoli making, and puja ceremonies
+              </p>
+            </Card>
+            <Card className="p-8 text-center space-y-4 hover:shadow-xl transition-shadow border-2 border-purple-200">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-fuchsia-500 rounded-full flex items-center justify-center mx-auto">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Cultural Performances</h3>
+              <p className="text-gray-600">
+                Enjoy dance performances, music, fashion shows, and traditional entertainment
+              </p>
+            </Card>
+            <Card className="p-8 text-center space-y-4 hover:shadow-xl transition-shadow border-2 border-pink-200">
+              <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-orange-500 rounded-full flex items-center justify-center mx-auto">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Spectacular Fireworks</h3>
+              <p className="text-gray-600">
+                End the evening with a breathtaking fireworks display lighting up the night sky
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" className="py-20 bg-white">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <div className="text-center space-y-4 mb-12">
+            <h2 className="text-4xl font-bold text-gray-900">Frequently Asked Questions</h2>
+          </div>
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">When is the event?</h3>
+              <p className="text-gray-600">October 20-22, 2025, from 6:00 PM to 10:00 PM each evening.</p>
+            </Card>
+            <Card className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Where is it located?</h3>
+              <p className="text-gray-600">
+                {isSignedIn ? "Little Elm Beach Park, Allen, TX 75013" : "Sign in to view the exact location."}
+              </p>
+            </Card>
+            <Card className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Is there an entry fee?</h3>
+              <p className="text-gray-600">
+                Entry is free! We welcome donations to support the event and community activities.
+              </p>
+            </Card>
+            <Card className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Can I volunteer?</h3>
+              <p className="text-gray-600">
+                Yes! We welcome volunteers for setup, food service, decoration, and cleanup. Click the "Become A
+                Volunteer" button to sign up.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white py-12">
+        <div className="container mx-auto px-4 text-center space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <Sparkles className="w-8 h-8" />
+            <h3 className="text-2xl font-bold">Diwali 2025</h3>
+          </div>
+          <p className="text-purple-100">Pecan Meadow Community</p>
+          <p className="text-sm text-purple-200">© 2025 All rights reserved.</p>
+        </div>
+      </footer>
+
+      <Dialog open={showRegistrationModal} onOpenChange={setShowRegistrationModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Register for Diwali 2025</DialogTitle>
+            <DialogDescription>Fill out the form below to register your family</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleRegistrationSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name *</Label>
+              <Input id="name" name="name" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email *</Label>
+              <Input id="email" name="email" type="email" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number *</Label>
+              <Input id="phone" name="phone" type="tel" required />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="adults">Number of Adults *</Label>
+                <Input id="adults" name="adults" type="number" min="0" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="kids">Number of Kids *</Label>
+                <Input id="kids" name="kids" type="number" min="0" required />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="amount">Donation Amount (Optional)</Label>
+              <Input id="amount" name="amount" type="number" min="0" placeholder="$0" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="zelleEmail">Zelle Email for Payment</Label>
+              <Input id="zelleEmail" name="zelleEmail" type="email" placeholder="payments@example.com" />
+              <p className="text-sm text-gray-500">Send payment to this Zelle email after registration</p>
+            </div>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600"
+            >
+              Submit Registration
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showVolunteerModal} onOpenChange={setShowVolunteerModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Volunteer Registration</DialogTitle>
+            <DialogDescription>Help us make this event special</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleVolunteerSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="v-name">Full Name *</Label>
+              <Input id="v-name" name="name" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="v-email">Email *</Label>
+              <Input id="v-email" name="email" type="email" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="v-phone">Phone Number *</Label>
+              <Input id="v-phone" name="phone" type="tel" required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="activity">Volunteer Activity *</Label>
+              <select
+                id="activity"
+                name="activity"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Select an activity</option>
+                <option value="Setup">Setup & Decoration</option>
+                <option value="Food Service">Food Service</option>
+                <option value="Registration">Registration Desk</option>
+                <option value="Kids Activities">Kids Activities</option>
+                <option value="Cleanup">Cleanup</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="date">Preferred Date *</Label>
+              <Input id="date" name="date" type="date" required />
+            </div>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-600"
+            >
+              Submit Volunteer Registration
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showGalleryModal} onOpenChange={setShowGalleryModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Event Gallery</DialogTitle>
+            <DialogDescription>Photos from previous celebrations</DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                <img
+                  src={`/diwali-celebration-photo-.jpg?height=300&width=300&query=diwali celebration photo ${i}`}
+                  alt={`Gallery ${i}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showParticipantsModal} onOpenChange={setShowParticipantsModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Registered Participants</DialogTitle>
+            <DialogDescription>Enter passcode to view participants list</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                type="password"
+                placeholder="Enter passcode"
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+              />
+              <Button onClick={handleViewParticipants}>View</Button>
+            </div>
+            {participants.length > 0 && (
+              <div className="space-y-2">
+                {participants.map((p, i) => (
+                  <Card key={i} className="p-4">
+                    <p className="font-semibold">{p.name}</p>
+                    <p className="text-sm text-gray-600">{p.email}</p>
+                    <p className="text-sm text-gray-600">
+                      Adults: {p.adults}, Kids: {p.kids}
+                    </p>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showFinancialsModal} onOpenChange={setShowFinancialsModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Event Financials</DialogTitle>
+            <DialogDescription>Admin access required</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                type="password"
+                placeholder="Enter admin passcode"
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+              />
+              <Button onClick={handleViewFinancials}>View</Button>
+            </div>
+            {expenses.length > 0 && (
+              <div className="space-y-2">
+                {expenses.map((e, i) => (
+                  <Card key={i} className="p-4">
+                    <p className="font-semibold">{e.category}</p>
+                    <p className="text-sm text-gray-600">{e.description}</p>
+                    <p className="text-lg font-bold text-green-600">${e.amount}</p>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
