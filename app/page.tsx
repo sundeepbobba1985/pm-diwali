@@ -184,14 +184,38 @@ export default function Page() {
   const handleVolunteerSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const volunteers = JSON.parse(localStorage.getItem("pm-diwali-volunteers") || "[]")
-      volunteers.push({
+      const volunteerData = {
         ...volunteerForm,
         timestamp: new Date().toISOString(),
+      }
+
+      const response = await fetch("/api/submit-volunteer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(volunteerData),
       })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to submit volunteer registration")
+      }
+
+      // Also save to localStorage as backup
+      const volunteers = JSON.parse(localStorage.getItem("pm-diwali-volunteers") || "[]")
+      volunteers.push(volunteerData)
       localStorage.setItem("pm-diwali-volunteers", JSON.stringify(volunteers))
 
-      alert("Thank you for volunteering! We'll contact you soon.")
+      if (result.warning || result.error) {
+        alert(
+          `Volunteer registration successful! Note: ${result.warning || result.error}\n\nYour data is saved locally.`,
+        )
+      } else {
+        alert("Thank you for volunteering! Your registration has been saved to Google Sheets. We'll contact you soon.")
+      }
+
       setShowVolunteerModal(false)
       setVolunteerForm({
         name: "",
@@ -200,6 +224,7 @@ export default function Page() {
         cleanupDate: "",
       })
     } catch (error) {
+      console.error("Volunteer registration error:", error)
       alert("Volunteer registration failed. Please try again.")
     }
   }
@@ -1092,23 +1117,14 @@ export default function Page() {
                     <option value="" className="bg-gray-800">
                       Select an activity
                     </option>
-                    <option value="Prasadam Morning" className="bg-gray-800">
-                      Prasadam Preparation - Morning
+                    <option value="Audio/Video Setup Co-ordination" className="bg-gray-800">
+                      Audio/Video Setup Co-ordination
                     </option>
-                    <option value="Prasadam Evening" className="bg-gray-800">
-                      Prasadam Preparation - Evening
+                    <option value="Decoration & setup" className="bg-gray-800">
+                      Decoration & setup
                     </option>
-                    <option value="Decoration" className="bg-gray-800">
-                      Decoration & Setup
-                    </option>
-                    <option value="Cleanup" className="bg-gray-800">
-                      Cleanup & Organizing
-                    </option>
-                    <option value="Cultural Program" className="bg-gray-800">
-                      Cultural Program Coordination
-                    </option>
-                    <option value="Registration Desk" className="bg-gray-800">
-                      Registration Desk
+                    <option value="Clean-up Help" className="bg-gray-800">
+                      Clean-up Help
                     </option>
                   </select>
                 </div>

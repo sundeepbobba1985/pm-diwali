@@ -1,20 +1,33 @@
 # Google Sheets Integration Setup
 
-Follow these steps to connect your registration form to Google Sheets:
+Follow these steps to connect your registration and volunteer forms to Google Sheets:
 
-## Step 1: Create a Google Sheet
+## Step 1: Create Google Sheets
 
 1. Go to [Google Sheets](https://sheets.google.com)
 2. Create a new spreadsheet named "Diwali 2025 Registrations"
-3. In the first row, add these column headers:
-   - A1: `Timestamp`
-   - B1: `Full Name`
-   - C1: `Email`
-   - D1: `Address`
-   - E1: `Mobile`
-   - F1: `Adults`
-   - G1: `Kids`
-   - H1: `Zelle Confirmation`
+3. Create two sheets within this spreadsheet:
+   - **Sheet 1: "Registrations"** - for family registrations
+   - **Sheet 2: "Volunteers"** - for volunteer sign-ups
+
+### Registrations Sheet Headers (Sheet 1)
+In the first row, add these column headers:
+- A1: `Timestamp`
+- B1: `Full Name`
+- C1: `Email`
+- D1: `Address`
+- E1: `Mobile`
+- F1: `Adults`
+- G1: `Kids`
+- H1: `Zelle Confirmation`
+
+### Volunteers Sheet Headers (Sheet 2)
+In the first row, add these column headers:
+- A1: `Timestamp`
+- B1: `Name`
+- C1: `Email`
+- D1: `Volunteer Activity`
+- E1: `Preferred Date`
 
 ## Step 2: Create Google Apps Script
 
@@ -24,8 +37,9 @@ Follow these steps to connect your registration form to Google Sheets:
 \`\`\`javascript
 function doGet(e) {
   try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    const data = sheet.getDataRange().getValues();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const registrationSheet = ss.getSheetByName("Registrations");
+    const data = registrationSheet.getDataRange().getValues();
     
     // Skip header row and calculate totals
     let totalFamilies = data.length - 1; // Subtract header row
@@ -56,25 +70,48 @@ function doGet(e) {
 
 function doPost(e) {
   try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
     const data = JSON.parse(e.postData.contents);
     
-    // Add row with registration data
-    sheet.appendRow([
-      data.timestamp,
-      data.fullName,
-      data.email,
-      data.address,
-      data.mobile,
-      data.adults,
-      data.kids,
-      data.zelleConfirmation
-    ]);
-    
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      message: "Registration added successfully"
-    })).setMimeType(ContentService.MimeType.JSON);
+    // Check if this is a volunteer registration or family registration
+    if (data.type === "volunteer") {
+      const volunteerSheet = ss.getSheetByName("Volunteers");
+      
+      // Add row with volunteer data
+      volunteerSheet.appendRow([
+        data.timestamp,
+        data.name,
+        data.email,
+        data.volunteerType,
+        data.cleanupDate || "Not specified"
+      ]);
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        message: "Volunteer registration added successfully"
+      })).setMimeType(ContentService.MimeType.JSON);
+      
+    } else {
+      // Family registration
+      const registrationSheet = ss.getSheetByName("Registrations");
+      
+      // Add row with registration data
+      registrationSheet.appendRow([
+        data.timestamp,
+        data.fullName,
+        data.email,
+        data.address,
+        data.mobile,
+        data.adults,
+        data.kids,
+        data.zelleConfirmation
+      ]);
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        message: "Registration added successfully"
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
     
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
@@ -89,7 +126,7 @@ function doPost(e) {
 4. Click **Deploy** → **New deployment**
 5. Click the gear icon next to "Select type" and choose **Web app**
 6. Configure:
-   - Description: "Diwali Registration Webhook"
+   - Description: "Diwali Registration & Volunteer Webhook"
    - Execute as: **Me**
    - Who has access: **Anyone**
 7. Click **Deploy**
@@ -109,23 +146,26 @@ function doPost(e) {
 
 ## How It Works
 
-The Google Apps Script now supports both:
-- **POST requests**: Add new registrations to the sheet
-- **GET requests**: Retrieve statistics (total families, adults, kids)
+The Google Apps Script now supports:
+- **POST requests for registrations**: Add new family registrations to the "Registrations" sheet
+- **POST requests for volunteers**: Add new volunteer sign-ups to the "Volunteers" sheet
+- **GET requests**: Retrieve statistics (total families, adults, kids) from the "Registrations" sheet
 
-The homepage automatically fetches and displays these statistics every 30 seconds, showing visitors how many people have already registered.
+The homepage automatically fetches and displays registration statistics every 30 seconds, showing visitors how many people have already registered.
 
 ## Testing
 
-After setup, when someone submits the registration form:
-1. Data will be sent to your Google Sheet automatically
-2. Data will also be saved to localStorage as backup
-3. You can view all registrations in your Google Sheet in real-time
-4. The homepage will display live registration statistics
+After setup:
+1. **Family Registration**: Data will be sent to the "Registrations" sheet
+2. **Volunteer Sign-up**: Data will be sent to the "Volunteers" sheet
+3. Both forms also save data to localStorage as backup
+4. You can view all data in your Google Sheet in real-time
+5. The homepage displays live registration statistics
 
 ## Troubleshooting
 
-- If registrations aren't appearing, check the Apps Script execution logs
+- If data isn't appearing, check the Apps Script execution logs
 - Make sure the Web app is deployed with "Anyone" access
 - Verify the webhook URL is correctly added to Vercel environment variables
+- Ensure both sheets ("Registrations" and "Volunteers") exist with correct names
 - If statistics aren't updating, test the GET endpoint by visiting the webhook URL in your browser
