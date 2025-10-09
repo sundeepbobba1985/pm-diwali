@@ -1,20 +1,23 @@
 import { NextResponse } from "next/server"
+import { Redis } from "@upstash/redis"
 
 export const dynamic = "force-dynamic"
 
-let visitorCount = 0
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
+})
 
 export async function GET() {
   try {
-    // Increment the visitor count
-    visitorCount++
+    const count = await redis.incr("visitor_count")
 
     return NextResponse.json({
-      count: visitorCount,
+      count,
       success: true,
     })
   } catch (error) {
     console.error("Error tracking visitor count:", error)
-    return NextResponse.json({ error: "Failed to track visitor count", count: visitorCount }, { status: 500 })
+    return NextResponse.json({ error: "Failed to track visitor count", count: 0 }, { status: 500 })
   }
 }
