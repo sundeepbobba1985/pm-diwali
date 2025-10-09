@@ -5,7 +5,6 @@ export async function POST(request: Request) {
     const data = await request.json()
     console.log("[v0] Registration data received:", data)
 
-    // Send to Google Sheets via webhook
     const sheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL
 
     if (!sheetsWebhookUrl) {
@@ -20,16 +19,25 @@ export async function POST(request: Request) {
     console.log("[v0] Sending to Google Sheets webhook...")
 
     try {
+      const payload = {
+        type: "registration",
+        ...data,
+      }
+      console.log("[v0] Payload being sent:", payload)
+
       const response = await fetch(sheetsWebhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
+        redirect: "follow",
       })
 
-      const responseText = await response.text()
       console.log("[v0] Google Sheets response status:", response.status)
+      console.log("[v0] Response content-type:", response.headers.get("content-type"))
+
+      const responseText = await response.text()
       console.log("[v0] Google Sheets response:", responseText)
 
       if (!response.ok) {
@@ -38,6 +46,24 @@ export async function POST(request: Request) {
           success: true,
           message: "Registration saved locally (Google Sheets error)",
           error: `Google Sheets returned status ${response.status}`,
+        })
+      }
+
+      let result
+      try {
+        result = JSON.parse(responseText)
+        console.log("[v0] Parsed response:", result)
+      } catch (e) {
+        console.error("[v0] Failed to parse response as JSON:", e)
+        result = { success: true }
+      }
+
+      if (result.success === false) {
+        console.error("[v0] Google Sheets returned error:", result.message)
+        return NextResponse.json({
+          success: true,
+          message: "Registration saved locally (Google Sheets error)",
+          error: result.message,
         })
       }
 

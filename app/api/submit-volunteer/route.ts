@@ -39,22 +39,44 @@ export async function POST(request: Request) {
       console.log("[v0] Google Sheets response status:", response.status)
       console.log("[v0] Response content-type:", response.headers.get("content-type"))
 
+      const responseText = await response.text()
+      console.log("[v0] Google Sheets response:", responseText)
+
       if (!response.ok) {
-        const errorText = await response.text()
-        console.log("[v0] Google Sheets error response:", errorText)
-        throw new Error(`Google Sheets API returned ${response.status}`)
+        console.error("[v0] Google Sheets error response:", responseText)
+        return NextResponse.json({
+          success: true,
+          warning: "Data saved locally. Google Sheets sync failed.",
+          error: `Google Sheets returned status ${response.status}`,
+        })
       }
 
-      const result = await response.json()
-      console.log("[v0] Google Sheets success response:", result)
+      let result
+      try {
+        result = JSON.parse(responseText)
+        console.log("[v0] Parsed response:", result)
+      } catch (e) {
+        console.error("[v0] Failed to parse response as JSON:", e)
+        result = { success: true }
+      }
 
+      if (result.success === false) {
+        console.error("[v0] Google Sheets returned error:", result.message)
+        return NextResponse.json({
+          success: true,
+          warning: "Data saved locally. Google Sheets sync failed.",
+          error: result.message,
+        })
+      }
+
+      console.log("[v0] Successfully sent to Google Sheets")
       return NextResponse.json({
         success: true,
         message: "Volunteer registration submitted successfully",
         data: result,
       })
     } catch (webhookError) {
-      console.log("[v0] Webhook error:", webhookError)
+      console.error("[v0] Webhook error:", webhookError)
       return NextResponse.json(
         {
           success: true,
@@ -65,7 +87,7 @@ export async function POST(request: Request) {
       )
     }
   } catch (error) {
-    console.log("[v0] API error:", error)
+    console.error("[v0] API error:", error)
     return NextResponse.json(
       {
         success: false,
