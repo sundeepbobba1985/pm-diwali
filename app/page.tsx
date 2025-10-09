@@ -426,13 +426,11 @@ export default function Page() {
         </div>
       </nav>
 
-      <section
-        id="home"
-        className="relative pb-24 md:pb-32 bg-gradient-to-b from-purple-900 via-pink-700 to-orange-700"
-      >
+      <section id="home" className="relative pb-24 md:pb-32 bg-purple-900">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-pink-700 to-orange-700 pointer-events-none"></div>
         <div className="absolute inset-0 bg-[url('/diwali-diyas-rangoli-fireworks.jpg')] opacity-50 bg-cover bg-center"></div>
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center pt-4">
             <p className="text-2xl md:text-3xl font-bold text-yellow-200 mb-2 tracking-wide uppercase drop-shadow-lg">
               Pecan Meadow Community
             </p>
