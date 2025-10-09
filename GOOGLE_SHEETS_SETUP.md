@@ -7,10 +7,10 @@ Follow these steps to connect your registration and volunteer forms to Google Sh
 1. Go to [Google Sheets](https://sheets.google.com)
 2. Create a new spreadsheet named "Diwali 2025 Registrations"
 3. Create two sheets within this spreadsheet:
-   - **Sheet 1: "Registrations"** - for family registrations
+   - **Sheet 1: "Registration"** - for family registrations
    - **Sheet 2: "Volunteers"** - for volunteer sign-ups
 
-### Registrations Sheet Headers (Sheet 1)
+### Registration Sheet Headers (Sheet 1)
 In the first row, add these column headers:
 - A1: `Timestamp`
 - B1: `Full Name`
@@ -37,14 +37,14 @@ In the first row, add these column headers:
 function doGet(e) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const registrationSheet = ss.getSheetByName("Registrations");
+    const registrationSheet = ss.getSheetByName("Registration");
     
     if (!registrationSheet) {
       return ContentService.createTextOutput(JSON.stringify({
         totalFamilies: 0,
         totalAdults: 0,
         totalKids: 0,
-        error: "Sheet 'Registrations' not found. Please create it."
+        error: "Sheet 'Registration' not found. Please create it."
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
@@ -108,12 +108,12 @@ function doPost(e) {
       
     } else {
       // Family registration
-      const registrationSheet = ss.getSheetByName("Registrations");
+      const registrationSheet = ss.getSheetByName("Registration");
       
       if (!registrationSheet) {
         return ContentService.createTextOutput(JSON.stringify({
           success: false,
-          message: "Sheet 'Registrations' not found. Please create a sheet named 'Registrations' in your spreadsheet."
+          message: "Sheet 'Registration' not found. Please create a sheet named 'Registration' in your spreadsheet."
         })).setMimeType(ContentService.MimeType.JSON);
       }
       
@@ -169,16 +169,16 @@ function doPost(e) {
 ## How It Works
 
 The Google Apps Script now supports:
-- **POST requests for registrations**: Add new family registrations to the "Registrations" sheet
+- **POST requests for registrations**: Add new family registrations to the "Registration" sheet
 - **POST requests for volunteers**: Add new volunteer sign-ups to the "Volunteers" sheet
-- **GET requests**: Retrieve statistics (total families, adults, kids) from the "Registrations" sheet
+- **GET requests**: Retrieve statistics (total families, adults, kids) from the "Registration" sheet
 
 The homepage automatically fetches and displays registration statistics every 30 seconds, showing visitors how many people have already registered.
 
 ## Testing
 
 After setup:
-1. **Family Registration**: Data will be sent to the "Registrations" sheet
+1. **Family Registration**: Data will be sent to the "Registration" sheet
 2. **Volunteer Sign-up**: Data will be sent to the "Volunteers" sheet
 3. Both forms also save data to localStorage as backup
 4. You can view all data in your Google Sheet in real-time
@@ -189,13 +189,13 @@ After setup:
 - If data isn't appearing, check the Apps Script execution logs
 - Make sure the Web app is deployed with "Anyone" access
 - Verify the webhook URL is correctly added to Vercel environment variables
-- Ensure both sheets ("Registrations" and "Volunteers") exist with correct names
+- Ensure both sheets ("Registration" and "Volunteers") exist with correct names
 - If statistics aren't updating, test the GET endpoint by visiting the webhook URL in your browser
 
 **Common Issues:**
 
-1. **"Cannot read properties of null (reading 'appendRow')"** - This means the sheet doesn't exist. Make sure you have created both "Registrations" and "Volunteers" sheets (exact spelling, capital letters matter).
+1. **"Cannot read properties of null (reading 'appendRow')"** - This means the sheet doesn't exist. Make sure you have created both "Registration" and "Volunteers" sheets (exact spelling, capital letters matter).
 
 2. **Data not appearing** - After updating the script, you MUST create a NEW deployment (not update existing). Go to Deploy → New deployment.
 
-3. **Sheet name is case-sensitive** - Make sure your sheets are named exactly "Registrations" and "Volunteers" (with capital R and V).
+3. **Sheet name is case-sensitive** - Make sure your sheets are named exactly "Registration" and "Volunteers" (with capital R and V).

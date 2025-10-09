@@ -188,6 +188,8 @@ export default function Page() {
         timestamp: new Date().toISOString(),
       }
 
+      console.log("[v0] Submitting volunteer registration:", volunteerData)
+
       const response = await fetch("/api/submit-volunteer", {
         method: "POST",
         headers: {
@@ -197,8 +199,11 @@ export default function Page() {
       })
 
       const result = await response.json()
+      console.log("[v0] Volunteer response:", result)
+      console.log("[v0] Response status:", response.status)
 
       if (!response.ok) {
+        console.error("[v0] Volunteer submission failed:", result)
         throw new Error(result.message || "Failed to submit volunteer registration")
       }
 
@@ -208,10 +213,12 @@ export default function Page() {
       localStorage.setItem("pm-diwali-volunteers", JSON.stringify(volunteers))
 
       if (result.warning || result.error) {
+        console.warn("[v0] Volunteer registration warning:", result.warning || result.error)
         alert(
           `Volunteer registration successful! Note: ${result.warning || result.error}\n\nYour data is saved locally.`,
         )
       } else {
+        console.log("[v0] Volunteer registration successful!")
         alert("Thank you for volunteering! Your registration has been saved to Google Sheets. We'll contact you soon.")
       }
 
@@ -222,7 +229,7 @@ export default function Page() {
         volunteerType: "",
       })
     } catch (error) {
-      console.error("Volunteer registration error:", error)
+      console.error("[v0] Volunteer registration error:", error)
       alert("Volunteer registration failed. Please try again.")
     }
   }
