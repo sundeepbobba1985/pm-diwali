@@ -47,6 +47,8 @@ export default function Page() {
   })
   const [isGoogleSheetsConfigured, setIsGoogleSheetsConfigured] = useState(true)
 
+  const [visitorCount, setVisitorCount] = useState(0)
+
   const loadDashboardStats = async () => {
     console.log("[v0] Loading dashboard stats...")
     try {
@@ -127,6 +129,19 @@ export default function Page() {
     const statsInterval = setInterval(() => {
       loadDashboardStats()
     }, 30000)
+
+    const trackVisitor = async () => {
+      try {
+        const response = await fetch("/api/visitor-count")
+        const data = await response.json()
+        if (data.success) {
+          setVisitorCount(data.count)
+        }
+      } catch (error) {
+        console.error("Error tracking visitor:", error)
+      }
+    }
+    trackVisitor()
 
     return () => clearInterval(statsInterval)
   }, [])
@@ -1015,6 +1030,12 @@ export default function Page() {
           <p className="text-xs text-white/60 mt-3 flex items-center justify-center gap-1">
             Built with <Heart className="w-3 h-3 text-red-400 fill-red-400" /> by Sundeep using Vercel
           </p>
+          {visitorCount > 0 && (
+            <p className="text-xs text-white/50 mt-3">
+              <Users className="w-3 h-3 inline-block mr-1" />
+              {visitorCount.toLocaleString()} {visitorCount === 1 ? "visit" : "visits"}
+            </p>
+          )}
         </div>
       </footer>
 
