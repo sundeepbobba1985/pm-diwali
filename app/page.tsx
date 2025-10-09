@@ -360,7 +360,7 @@ export default function Page() {
           </div>
 
           {isMobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t border-white/20 pt-4">
+            <div className="md:hidden mt-4 pb-4 flex flex-col gap-3 border-t border-white/20 pt-4 bg-purple-900/95 rounded-b-lg">
               <button
                 onClick={() => scrollToSection("home")}
                 className="text-base font-bold text-white hover:text-yellow-300 transition-colors text-left"
@@ -428,11 +428,11 @@ export default function Page() {
 
       <section
         id="home"
-        className="relative py-24 md:py-32 bg-gradient-to-br from-orange-600 via-pink-600 to-purple-700"
+        className="relative pt-0 pb-24 md:pb-32 bg-gradient-to-br from-orange-600 via-pink-600 to-purple-700"
       >
         <div className="absolute inset-0 bg-[url('/diwali-diyas-rangoli-fireworks.jpg')] opacity-50 bg-cover bg-center"></div>
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center pt-16 md:pt-20">
             <p className="text-2xl md:text-3xl font-bold text-yellow-200 mb-6 tracking-wide uppercase drop-shadow-lg">
               Pecan Meadow Community
             </p>
@@ -1000,6 +1000,9 @@ export default function Page() {
           </div>
           <p className="text-sm text-white/80">© 2025 Pecan Meadow Community. All rights reserved.</p>
           <p className="text-xs text-white/60 mt-2">Celebrating traditions, building community</p>
+          <p className="text-xs text-white/60 mt-3 flex items-center justify-center gap-1">
+            Built with <Heart className="w-3 h-3 text-red-400 fill-red-400" /> by Sundeep using Vercel
+          </p>
         </div>
       </footer>
 
