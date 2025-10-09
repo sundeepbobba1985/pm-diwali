@@ -433,11 +433,11 @@ export default function Page() {
         <div className="absolute inset-0 bg-[url('/diwali-diyas-rangoli-fireworks.jpg')] opacity-50 bg-cover bg-center"></div>
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <p className="text-2xl md:text-3xl font-bold text-yellow-200 mb-4 tracking-wide uppercase drop-shadow-lg pt-4 md:pt-6">
+            <p className="text-2xl md:text-3xl font-bold text-yellow-200 mb-2 tracking-wide uppercase drop-shadow-lg">
               Pecan Meadow Community
             </p>
 
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 text-balance leading-tight text-white drop-shadow-2xl">
+            <h1 className="text-5xl md:text-7xl font-bold mb-4 text-balance leading-tight text-white drop-shadow-2xl">
               5th Annual
               <br />
               <span className="text-yellow-300">Diwali Celebration</span>
