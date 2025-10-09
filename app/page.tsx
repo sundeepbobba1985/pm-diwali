@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Clock, MapPin, Music, Heart, Users, X, Sparkles, Gift, Menu } from "lucide-react"
+import { Calendar, Clock, MapPin, Music, Heart, Users, X, Sparkles, Gift, Menu, UtensilsCrossed } from "lucide-react"
 
 export default function Page() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -668,12 +668,12 @@ export default function Page() {
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Volunteer With Us</h2>
             <p className="text-white/90 leading-relaxed max-w-2xl mx-auto">
-              Help make our Diwali celebration memorable! We need volunteers for audio/video setup, decoration, and
-              cleanup activities.
+              Help make our Diwali celebration memorable! We need volunteers for audio/video setup, decoration, food
+              pickup, and cleanup activities.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-12">
             <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
               <CardContent className="pt-8 pb-8 text-center">
                 <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -694,6 +694,18 @@ export default function Page() {
                 <h3 className="text-xl font-bold mb-3 text-white">Decoration & Setup</h3>
                 <p className="text-white/80 text-sm leading-relaxed">
                   Create beautiful decorations and set up the venue for celebrations
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-white/20 bg-white/10 backdrop-blur-md hover:shadow-2xl transition-shadow">
+              <CardContent className="pt-8 pb-8 text-center">
+                <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <UtensilsCrossed className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-white">Food Pickup</h3>
+                <p className="text-white/80 text-sm leading-relaxed">
+                  Help coordinate snack and dinner pickup from vendors at scheduled times
                 </p>
               </CardContent>
             </Card>
