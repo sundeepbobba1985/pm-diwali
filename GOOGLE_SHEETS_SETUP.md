@@ -38,6 +38,16 @@ function doGet(e) {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const registrationSheet = ss.getSheetByName("Registrations");
+    
+    if (!registrationSheet) {
+      return ContentService.createTextOutput(JSON.stringify({
+        totalFamilies: 0,
+        totalAdults: 0,
+        totalKids: 0,
+        error: "Sheet 'Registrations' not found. Please create it."
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
     const data = registrationSheet.getDataRange().getValues();
     
     // Skip header row and calculate totals
@@ -76,6 +86,13 @@ function doPost(e) {
     if (data.type === "volunteer") {
       const volunteerSheet = ss.getSheetByName("Volunteers");
       
+      if (!volunteerSheet) {
+        return ContentService.createTextOutput(JSON.stringify({
+          success: false,
+          message: "Sheet 'Volunteers' not found. Please create a sheet named 'Volunteers' in your spreadsheet."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
       // Add row with volunteer data
       volunteerSheet.appendRow([
         data.timestamp,
@@ -92,6 +109,13 @@ function doPost(e) {
     } else {
       // Family registration
       const registrationSheet = ss.getSheetByName("Registrations");
+      
+      if (!registrationSheet) {
+        return ContentService.createTextOutput(JSON.stringify({
+          success: false,
+          message: "Sheet 'Registrations' not found. Please create a sheet named 'Registrations' in your spreadsheet."
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
       
       // Add row with registration data
       registrationSheet.appendRow([
@@ -167,3 +191,11 @@ After setup:
 - Verify the webhook URL is correctly added to Vercel environment variables
 - Ensure both sheets ("Registrations" and "Volunteers") exist with correct names
 - If statistics aren't updating, test the GET endpoint by visiting the webhook URL in your browser
+
+**Common Issues:**
+
+1. **"Cannot read properties of null (reading 'appendRow')"** - This means the sheet doesn't exist. Make sure you have created both "Registrations" and "Volunteers" sheets (exact spelling, capital letters matter).
+
+2. **Data not appearing** - After updating the script, you MUST create a NEW deployment (not update existing). Go to Deploy → New deployment.
+
+3. **Sheet name is case-sensitive** - Make sure your sheets are named exactly "Registrations" and "Volunteers" (with capital R and V).

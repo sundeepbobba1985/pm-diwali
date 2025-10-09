@@ -489,7 +489,7 @@ export default function Page() {
                 <div className="text-center mb-8">
                   <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Registration</h2>
                   <div className="inline-block bg-gradient-to-r from-yellow-300 to-orange-400 px-8 py-4 rounded-full shadow-lg animate-glow">
-                    <p className="text-2xl md:text-3xl font-bold text-white">$75 per family</p>
+                    <p className="text-2xl md:text-3xl font-bold text-white">$100 per family</p>
                   </div>
                 </div>
 
@@ -528,7 +528,7 @@ export default function Page() {
                   <div className="space-y-6">
                     <div className="bg-white/15 rounded-xl p-6 border border-white/30 shadow-lg">
                       <h3 className="text-lg font-bold mb-4 text-white">Step 1: Payment via Zelle</h3>
-                      <p className="text-white/90 mb-4">Send $75 to:</p>
+                      <p className="text-white/90 mb-4">Send $100 to:</p>
                       <div className="bg-gradient-to-r from-yellow-300 to-orange-400 rounded-lg p-4 mb-4 shadow-lg">
                         <p className="font-mono text-lg text-center font-bold text-white">diwali@pecanmeadow.com</p>
                       </div>
@@ -933,7 +933,7 @@ export default function Page() {
           <div className="max-w-3xl mx-auto space-y-4">
             <Card className="border-white/20 bg-white/10 backdrop-blur-md">
               <CardContent className="pt-6 pb-6">
-                <h3 className="font-bold text-white mb-2">What is included in the $75 registration fee?</h3>
+                <h3 className="font-bold text-white mb-2">What is included in the $100 registration fee?</h3>
                 <p className="text-white/80 text-sm">
                   The registration fee covers the event center rental, decoration, clean-up help, dinner
                 </p>
