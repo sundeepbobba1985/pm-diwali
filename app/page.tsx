@@ -48,11 +48,17 @@ export default function Page() {
   const [isGoogleSheetsConfigured, setIsGoogleSheetsConfigured] = useState(true)
 
   const loadDashboardStats = async () => {
+    console.log("[v0] Loading dashboard stats...")
     try {
-      const response = await fetch("/api/get-registrations")
+      const response = await fetch("/api/get-registrations", {
+        cache: "no-store", // Ensure fresh data
+      })
       const data = await response.json()
 
+      console.log("[v0] Dashboard stats response:", data)
+
       if (data.error) {
+        console.warn("[v0] API returned error, falling back to localStorage:", data.error)
         setIsGoogleSheetsConfigured(false)
         // Fall back to localStorage silently
         const storedData = localStorage.getItem("pm-diwali-registrations")
@@ -61,9 +67,11 @@ export default function Page() {
           const totalFamilies = registrations.length
           const totalAdults = registrations.reduce((sum: number, r: any) => sum + Number(r.adults || 0), 0)
           const totalKids = registrations.reduce((sum: number, r: any) => sum + Number(r.kids || 0), 0)
+          console.log("[v0] Stats from localStorage:", { totalFamilies, totalAdults, totalKids })
           setDashboardStats({ totalFamilies, totalAdults, totalKids })
         }
       } else {
+        console.log("[v0] Stats from API:", data)
         setIsGoogleSheetsConfigured(true)
         setDashboardStats({
           totalFamilies: data.totalFamilies || 0,
@@ -72,6 +80,7 @@ export default function Page() {
         })
       }
     } catch (error) {
+      console.error("[v0] Error loading dashboard stats:", error)
       setIsGoogleSheetsConfigured(false)
       try {
         const storedData = localStorage.getItem("pm-diwali-registrations")
@@ -80,10 +89,11 @@ export default function Page() {
           const totalFamilies = registrations.length
           const totalAdults = registrations.reduce((sum: number, r: any) => sum + Number(r.adults || 0), 0)
           const totalKids = registrations.reduce((sum: number, r: any) => sum + Number(r.kids || 0), 0)
+          console.log("[v0] Stats from localStorage (error fallback):", { totalFamilies, totalAdults, totalKids })
           setDashboardStats({ totalFamilies, totalAdults, totalKids })
         }
       } catch (fallbackError) {
-        // Silent fallback error
+        console.error("[v0] Fallback error:", fallbackError)
       }
     }
   }
@@ -171,7 +181,8 @@ export default function Page() {
         kids: "",
         zelleConfirmation: "",
       })
-      loadDashboardStats()
+      console.log("[v0] Reloading stats after registration...")
+      await loadDashboardStats()
     } catch (error) {
       console.error("[v0] Registration error:", error)
       alert("Registration failed. Please try again or contact support.")
