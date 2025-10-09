@@ -82,6 +82,9 @@ function doPost(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const data = JSON.parse(e.postData.contents);
     
+    const allSheets = ss.getSheets();
+    const sheetNames = allSheets.map(sheet => sheet.getName());
+    
     // Check if this is a volunteer registration or family registration
     if (data.type === "volunteer") {
       const volunteerSheet = ss.getSheetByName("Volunteers");
@@ -89,7 +92,7 @@ function doPost(e) {
       if (!volunteerSheet) {
         return ContentService.createTextOutput(JSON.stringify({
           success: false,
-          message: "Sheet 'Volunteers' not found. Please create a sheet named 'Volunteers' in your spreadsheet."
+          message: "Sheet 'Volunteers' not found. Available sheets: " + sheetNames.join(", ") + ". Please check the exact spelling and capitalization."
         })).setMimeType(ContentService.MimeType.JSON);
       }
       
@@ -113,7 +116,7 @@ function doPost(e) {
       if (!registrationSheet) {
         return ContentService.createTextOutput(JSON.stringify({
           success: false,
-          message: "Sheet 'Registration' not found. Please create a sheet named 'Registration' in your spreadsheet."
+          message: "Sheet 'Registration' not found. Available sheets: " + sheetNames.join(", ") + ". Please check the exact spelling and capitalization."
         })).setMimeType(ContentService.MimeType.JSON);
       }
       

@@ -537,7 +537,8 @@ export default function Page() {
                       <h3 className="text-lg font-bold mb-4 text-white">Step 1: Payment via Zelle</h3>
                       <p className="text-white/90 mb-4">Send $100 to:</p>
                       <div className="bg-gradient-to-r from-yellow-300 to-orange-400 rounded-lg p-4 mb-4 shadow-lg">
-                        <p className="font-mono text-lg text-center font-bold text-white">diwali@pecanmeadow.com</p>
+                        <p className="font-mono text-lg text-center font-bold text-white">9739795250</p>
+                        <p className="text-sm text-center font-semibold text-white mt-1">Satish Kadimsetti</p>
                       </div>
                       <p className="text-sm text-white/80">
                         Include your family name in the note and save the confirmation number
@@ -1131,6 +1132,12 @@ export default function Page() {
                     </option>
                     <option value="Clean-up Help" className="bg-gray-800">
                       Clean-up Help
+                    </option>
+                    <option value="Snack Pickup ( 5:30PM on November 1st)" className="bg-gray-800">
+                      Snack Pickup ( 5:30PM on November 1st)
+                    </option>
+                    <option value="Dinner Pickup ( 7PM on November 1st)" className="bg-gray-800">
+                      Dinner Pickup ( 7PM on November 1st)
                     </option>
                   </select>
                 </div>
