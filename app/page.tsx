@@ -656,23 +656,26 @@ export default function Page() {
 
                     <div>
                       <label className="block text-sm font-medium mb-2 text-white">
-                        Zelle Confirmation Number (Last 4 digits only) *
+                        Zelle Confirmation Number (Last 4 characters only) *
                       </label>
                       <input
                         type="text"
                         required
                         maxLength={4}
-                        pattern="[0-9]{4}"
-                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
-                        placeholder="Enter last 4 digits"
+                        pattern="[A-Za-z0-9]{4}"
+                        className="w-full px-4 py-3 border border-white/20 rounded-lg bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-300 focus:border-transparent uppercase"
+                        placeholder="Enter last 4 characters"
                         value={formData.zelleConfirmation}
                         onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, "").slice(0, 4)
+                          const value = e.target.value
+                            .replace(/[^A-Za-z0-9]/g, "")
+                            .slice(0, 4)
+                            .toUpperCase()
                           setFormData({ ...formData, zelleConfirmation: value })
                         }}
                       />
                       <p className="text-xs text-white/60 mt-1">
-                        Enter only the last 4 digits of your Zelle confirmation number
+                        Enter only the last 4 characters (letters or numbers) of your Zelle confirmation number
                       </p>
                     </div>
 
